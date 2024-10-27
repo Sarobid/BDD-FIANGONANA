@@ -1,11 +1,16 @@
 import axios from 'axios';
 import url from '../common';
 const mpiangonaServ = {
-    getAllMpiangona : (data,num,traiteSucces,traiteError)=>{
+    getAllOpions : async (colonne)=>{
+        let data = await axios.get(url.urlHtpp+"/mpiangona/option/"+colonne)
+        console.log("data "+colonne,data)
+        return data.data;
+    },
+    getAllMpiangona : (data,num,pageSize,traiteSucces,traiteError)=>{
         if(num <= 0){
             num=1;
         }
-        axios.post(url.urlHtpp+"/mpiangonas/"+num+"/20", data)
+        axios.post(url.urlHtpp+"/mpiangonas/"+num+"/"+pageSize, data)
         .then(response=>{
            // console.log(response.data)
             traiteSucces(response.data.data,response.data.totalPage);

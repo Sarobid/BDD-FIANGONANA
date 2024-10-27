@@ -1,3 +1,6 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'primereact/resources/primereact.min.css'; // CSS de base de PrimeReact
+import 'primereact/resources/themes/saga-blue/theme.css'; // Thème PrimeReact (exemple : saga-blue)
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import {
