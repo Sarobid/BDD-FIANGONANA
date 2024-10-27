@@ -214,7 +214,7 @@ function ListeMpiangonaDrag() {
             return itemTemplate(mpiangona, index);
         });
 
-        return <div className="grid grid-nogutter">{list}</div>;
+        return <div className="grid grid-nogutter" style={{ maxHeight: '350px', 'overflow': 'auto' }}>{list}</div>;
     };
 
     useEffect(() => {
