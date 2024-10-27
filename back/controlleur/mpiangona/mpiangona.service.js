@@ -2,6 +2,7 @@ const client = require("../../db");
 const objetkeys = ['numfichempiangona','adressempiangona','nommpiangona','prenommpiangona','nomcompletmpiangona','datenaissancempiangona','codegenrempiangona','datebatisa','lieubatisa','estmpandray','datempandray','lieumpandray','karatrampandray','nompere','nommere','telephone','email','estvadysoratra','estvadymasina','matyvady','nisarabady','asampiangona','lieuasa']
 //const critereFiltre = ['numfichempiangona','adressempiangona','nommpiangona','prenommpiangona','nomcompletmpiangona','datenaissancempiangona','codegenrempiangona','datebatisa','lieubatisa','estmpandray','datempandray','lieumpandray','karatrampandray','nompere','nommere','telephone','email','estvadysoratra','estvadymasina','matyvady','nisarabady','asampiangona','lieuasa']
 const critereFiltre = [
+    { title: "Nom/Prenom", data: "nomcompletmpiangona", typeData: 'input' },
     { title: "N° FICHE", data: "numfichempiangona", typeData: 'input' },
     { title: "ADIRESY", data: "adressempiangona", typeData: 'input' },
     { title: "ANARANA", data: "nommpiangona", typeData: 'input' },

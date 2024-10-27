@@ -8,12 +8,17 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import ListeMpiangona from "./composants/ListeMpiangona";
+import ListeMpiangonaDrag from './composants/ListeMpiangonaDrag';
 import "./index.css";
 
 const router = createBrowserRouter([
   {
     path: "/liste-mpiangona",
     element: <ListeMpiangona/>,
+  },
+  {
+    path: "/liste-mpiangona-drag",
+    element: <ListeMpiangonaDrag/>,
   },
   {
     path: "/dada",
