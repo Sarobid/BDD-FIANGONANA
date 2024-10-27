@@ -4,12 +4,13 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
+import ListeMpiangona from "./composants/ListeMpiangona";
 import "./index.css";
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <div>Hello world!</div>,
+    path: "/liste-mpiangona",
+    element: <ListeMpiangona/>,
   },
   {
     path: "/dada",

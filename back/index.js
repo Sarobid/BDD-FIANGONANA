@@ -9,10 +9,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 var corsOptions = {
-    origin: ["http://localhost:4200","http://41.188.43.90:8082"]
+    origin: ["http://localhost:5173","http://41.188.43.90:8082"]
 };
 app.use(cors(corsOptions));
 
 require("./controlleur/genre/genre.controlleur")(app);
+require("./controlleur/mpiangona/mpiangona.controlleur")(app);
 const httpServ = http.createServer(app);
 server.start(httpServ);
