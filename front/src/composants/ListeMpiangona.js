@@ -169,7 +169,7 @@ const ListeMpiangona = ({title})=> {
             }
         },
         { title: "TOERANA NANDRAISANA", data: "lieumpandray", typeData: 'input', isExtra: true },
-        { title: "N° KARATRA MPANDRAY", data: "karatrampandray", typeData: 'input' },
+        { title: "N° KARATRA MPANDRAY", data: "karatrampandray",isExtra: true, typeData: 'input' },
         { title: "RAY", data: "nompere", isExtra: true, typeData: 'input' },
         { title: "RENY", data: "nommere", isExtra: true, typeData: 'input' },
         {
@@ -248,7 +248,7 @@ const ListeMpiangona = ({title})=> {
     }
 
     const header = (
-        <div className="flex flex-wrap align-items-center justify-content-between gap-2">
+        <div className="flex flex-wrap align-items-center justify-content-between gap-2" style={{padding:"10px"}}>
             <Button
                 onClick={toggleExtraColumns}
                 variant="info"
@@ -312,6 +312,8 @@ const ListeMpiangona = ({title})=> {
                                 lazy
                                 paginator
                                 scrollable
+                                showGridlines
+                                rowHover
                                 scrollHeight="500px"
                                 className="datatable-gridlines"
                                 totalRecords={totalRecords}
@@ -320,6 +322,8 @@ const ListeMpiangona = ({title})=> {
                                 loading={loading}
                                 header={header}
                                 footer={footer}
+                                size="large"
+                                tableStyle={{ minWidth: '50rem' }}
                                 onPage={onPage}
                             >
                                 {titleTable.map((column, index) => (

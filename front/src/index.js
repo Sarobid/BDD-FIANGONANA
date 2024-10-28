@@ -27,8 +27,10 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import 'primereact/resources/primereact.min.css'; // CSS de base de PrimeReact
-import 'primereact/resources/themes/saga-blue/theme.css'; // Thème PrimeReact (exemple : saga-blue)
+import 'primeflex/primeflex.css';
+import 'primeicons/primeicons.css';
+import 'primereact/resources/primereact.min.css';
+import 'primereact/resources/themes/saga-blue/theme.css';
 
 const container = document.getElementById("root");
 const root = createRoot(container);

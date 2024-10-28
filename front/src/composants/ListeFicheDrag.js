@@ -137,7 +137,7 @@ const ListeFicheDrag = ({title})=> {
     const footer = `TOTAL : ${totalRecords.toLocaleString()}`;
     const itemTemplate = (mpiangona, index) => {
         return (
-            <div className="col-12 sm:col-6 lg:col-4 xl:col-3 p-2">
+            <div className="col-12 sm:col-6 lg:col-12 xl:col-12 p-2">
                 <Card title={renderColumnData(mpiangona, titleTable[0])}>
                     {titleTable.map((column, index2) => (
                         (!column.isExtra || showExtraColumns) && (
