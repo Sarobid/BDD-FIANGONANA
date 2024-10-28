@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { FloatingLabel, Form } from 'react-bootstrap';
+import { Col, FloatingLabel, Form, Row } from 'react-bootstrap';
 
 const FormField = ({ colonne, title, type, onchange, value }) => {
     const [options, setOptions] = useState([]);
@@ -30,11 +30,30 @@ const FormField = ({ colonne, title, type, onchange, value }) => {
                 </Form.Select>
             </FloatingLabel>
         );
-    }else if (type === "date") {
+    } else if (type === "date") {
         return (
             <FloatingLabel controlId="floatingInput" label={title} className="mb-3">
                 <Form.Control type="date" value={value} onChange={e => onchange(e.target.value)} />
             </FloatingLabel>
+        );
+    }
+    else if (type === "number") {
+        let vmin = value[colonne.data+"min"] || "";
+        let vmax = value[colonne.data+"max"] || "";
+        
+        return (
+                <Row>
+                    <Col sm={6}>
+                        <FloatingLabel controlId="floatingInput" label={"Min "+title} className="mb-1">
+                            <Form.Control type="text" value={vmin} onChange={e => onchange(e.target.value,'min')} />
+                        </FloatingLabel>
+                    </Col>
+                    <Col sm={6}>
+                        <FloatingLabel controlId="floatingInput" label={"Max "+title} className="mb-1">
+                            <Form.Control type="text" value={vmax} onChange={e => onchange(e.target.value,'max')} />
+                        </FloatingLabel>
+                    </Col>
+                </Row>
         );
     }
     return null;
