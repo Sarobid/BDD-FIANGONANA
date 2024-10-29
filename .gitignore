@@ -8,7 +8,7 @@
 /front/tmp
 /front/out-tsc
 /front/bazel-out
-/front/src/assets
+#/front/src/assets
 # Node
 /front/node_modules
 /front/npm-debug.log
