@@ -31,6 +31,21 @@ async function getAll(param, num, nombrePage) {
             condition += " and a.nombrempiangona<=" + param['nombrempiangonamax'] + "";
         }
     }
+    if(param['nombredekonina']){
+        if(param['nombredekonina']!==""){
+            condition += " and a.nombredekonina=" + param['nombredekonina'] + "";
+        }
+    }
+    if(param['nombredekoninamin']){
+        if(param['nombredekoninamin']!==""){
+            condition += " and a.nombredekonina>=" + param['nombredekoninamin'] + "";
+        }
+    }
+    if(param['nombredekoninamax']){
+        if(param['nombredekoninamax']!==""){
+            condition += " and a.nombredekonina<=" + param['nombredekoninamax'] + "";
+        }
+    }
     if(param['numfichempiangona']){
         if(param['numfichempiangona']!==""){
             condition += " and a.numfichempiangona='" + param['numfichempiangona'] + "'";

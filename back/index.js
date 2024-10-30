@@ -16,5 +16,6 @@ app.use(cors(corsOptions));
 require("./controlleur/genre/genre.controlleur")(app);
 require("./controlleur/mpiangona/mpiangona.controlleur")(app);
 require("./controlleur/fiche/fiche.controlleur")(app);
+require("./controlleur/dekonina/dekonina.controlleur")(app);
 const httpServ = http.createServer(app);
 server.start(httpServ);

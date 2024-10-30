@@ -21,6 +21,7 @@ const ListeFicheDrag = ({title})=> {
         { title: "N° FICHE", data: "numfichempiangona", typeData: 'input' },
         { title: "Nombre famille", data: "nombrempiangona", typeData: 'number' },
         { title: "Nombre Adresse", data: "nombreadresse", typeData: 'number' },
+        { title: "Nombre Dekonina Mpiahy", data: "nombredekonina", typeData: 'number' },
         {
             title: "ADIRESY", data: "adressempiangona", typeData: 'input', modeAffiche: (value) => {
                 return (
@@ -57,7 +58,8 @@ const ListeFicheDrag = ({title})=> {
 
     const onPage = async (event) => {
         setLoading(true);
-        const pageNumber = event.first
+        const pageNumber = event.first / event.rows + 1;
+        console.log("Numéro de page :", pageNumber);
         fetchDataForPage(pageNumber, event.rows, (data, totalPage) => {
             setData(data);
             setTotalRecords(totalPage);

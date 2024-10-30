@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 
 import { useEffect, useState } from "react";
 import { Button, Col, Row } from "react-bootstrap";
@@ -6,25 +5,24 @@ import mpiangonaServ from "../services/mpiangona/mpiangonaService";
 import serv from "../services/service";
 
 import { Card } from "primereact/card";
-import { DataView } from "primereact/dataview";
 import FormField from "../services/FormField";
 
+import * as Highcharts from 'highcharts';
+import HighchartsReact from 'highcharts-react-official';
 
 
-const ListeMpiangonaDrag = ({title})=> {
-    const [num, setNum] = useState(1);
+
+const StatistiqueMpandray = () => {
     const [data, setData] = useState([]);
-    const [totalRecords, setTotalRecords] = useState(0);
     const [loading, setLoading] = useState(true);
-    const [lazyParams, setLazyParams] = useState({ first: 0, rows: 5 });
     const [filterValues, setFilterValues] = useState({});
     const titleTable = [
         { title: "N° FICHE", data: "numfichempiangona", typeData: 'input' },
         { title: "ADIRESY", data: "adressempiangona", typeData: 'input' },
-        { title: "Nom/Prenom", data: "nomcompletmpiangona", typeData: 'input' },
-        { title: "ANARANA", data: "nommpiangona",isExtra:true, typeData: 'input' },
-        { title: "FANAMPINY 1", data: "prenommpiangona",isExtra:true, typeData: 'input' },
-        
+        { title: "Nom/Prenom", data: "nomcompletmpiangona", isExtra: true, typeData: 'input' },
+        { title: "ANARANA", data: "nommpiangona", isExtra: true, typeData: 'input' },
+        { title: "FANAMPINY 1", data: "prenommpiangona", isExtra: true, typeData: 'input' },
+
         {
             title: "DATY NAHATERAHANA", data: "datenaissancempiangona", typeData: 'date', isExtra: true, traitement: (value) => {
                 return serv.converteNombreEnDate(value);
@@ -37,24 +35,29 @@ const ListeMpiangonaDrag = ({title})=> {
             }
         },
         {
-            title: "LAHY/ VAVY", data: "codegenrempiangona", typeData: 'select',isExtra:true, getOptions: () => {
+            title: "LAHY/ VAVY", data: "codegenrempiangona", typeData: 'select', getOptions: () => {
                 return mpiangonaServ.getAllOpions("codegenrempiangona")
             }
         },
         {
-            title: "DEKONINA", data: "estdekonina", typeData: 'select', getOptions: () => {
+            title: "VITA BATISA", data: "namevitabatisa", typeData: 'select', getOptions: () => {
+                return mpiangonaServ.getAllOpions("namevitabatisa")
+            }
+        },
+        {
+            title: "DEKONINA", data: "estdekonina", typeData: 'select',isExtra: true, getOptions: () => {
                 return mpiangonaServ.getAllOpions("estdekonina")
             }
         },
-        { title: "Famille distribue", data: "nombrefiche", typeData: 'input' },
+        { title: "Famille distribue", data: "nombrefiche",isExtra: true, typeData: 'input' },
         {
-            title: "DATY BATISA", data: "datebatisa", typeData: 'date',isExtra:true, traitement: (value) => {
+            title: "DATY BATISA", data: "datebatisa", typeData: 'date', isExtra: true, traitement: (value) => {
                 return serv.converteNombreEnDate(value);
             }
         },
         { title: "TOERANA NANAOVANA BATISA", typeData: 'input', isExtra: true, data: "lieubatisa" },
         {
-            title: "MPANDRAY/ KATEKOMENA", data: "estmpandray",isExtra:true, typeData: 'select', getOptions: () => {
+            title: "MPANDRAY/ KATEKOMENA", data: "estmpandray", typeData: 'select', getOptions: () => {
                 return mpiangonaServ.getAllOpions("estmpandray")
             }
         },
@@ -102,33 +105,6 @@ const ListeMpiangonaDrag = ({title})=> {
         { title: "ASA", data: "asampiangona", isExtra: true, typeData: 'input' },
         { title: "TOERANA IASANA", data: "lieuasa", isExtra: true, typeData: 'input' }
     ];
-    const renderColumnData = (rowData, column) => {
-        const value = rowData[column.data];
-        return column.traitementAffiche ? column.traitementAffiche(value) : value;
-    };
-    const fetchDataForPage = (pageNumber, pageSize, traiteApres) => {
-        //console.log(filterValues)
-        mpiangonaServ.getAllMpiangona(filterValues, pageNumber, pageSize, (data, totalPage) => {
-            console.log("data", data);
-            console.log("data", totalPage);
-            traiteApres(data, totalPage)
-            setNum(num)
-        }, (error) => {
-            console.log(error);
-        })
-    };
-
-    const onPage = async (event) => {
-        setLoading(true);
-        const pageNumber = event.first / event.rows + 1;
-        console.log("Numéro de page :", pageNumber);
-        fetchDataForPage(pageNumber, event.rows, (data, totalPage) => {
-            setData(data);
-            setTotalRecords(totalPage);
-            setLoading(false);
-            setLazyParams(event);
-        });
-    };
     const [showExtraColumns, setShowExtraColumns] = useState(false);
 
     const toggleExtraColumns = () => {
@@ -143,34 +119,61 @@ const ListeMpiangonaDrag = ({title})=> {
     const handleFilterChange = (key, value) => {
         setFilterValues(prev => ({ ...prev, [key]: value }));
     };
-    const filtrer = () => {
+    const options = {
+        chart: {
+            type: 'column' // Type de graphique (par exemple 'line', 'bar', 'pie', etc.)
+        },
+        xAxis: {
+            categories: ['Mpandray']
+        },
+        yAxis: {
+            title: {
+                text: 'Nombre'
+            }
+        },
+        series: data
+    }
+    const filtrer = async () => {
         console.log(filterValues)
-        setLazyParams((prev) => ({ ...prev, first: 0 }));
-        onPage(lazyParams);
+        try {
+            let d = await mpiangonaServ.getStateMpandray(filterValues);
+            let donnee = [];
+            for (let i = 0; i < d.data.length; i++) {
+                donnee.push({ name: d.data[i]['name'], data: [Number(d.data[i]['value'])], color: d.data[i]['color'] })
+            }
+
+            setData(donnee);
+        } catch (error) {
+            console.log("error", error)
+        }
     }
 
     const header = (
         <div className="flex flex-wrap align-items-center justify-content-between gap-2">
-            <Button
-                onClick={toggleExtraColumns}
-                variant="info"
-            >
-                {showExtraColumns ? "Afficher moins" : "Afficher plus"}
-            </Button>
             <Button
                 onClick={toggleFilter}
                 variant="success"
             >
                 {showFilter ? "Recherche moins" : "Recherche"}
             </Button>
+
             {
                 showFilter && (
                     <>
                         <Card>
+
                             <Row>
+                                <Col sm={12}>
+                                    <Button
+                                        onClick={toggleExtraColumns}
+                                        variant="info"
+                                    >
+                                        {showExtraColumns ? "Afficher moins" : "Afficher plus"}
+                                    </Button>
+                                </Col>
                                 {titleTable.map((column, index) => (
                                     (!column.isExtra || showExtraColumns) && (
-                                        <Col key={index} sm={12}>
+                                        <Col key={index} sm={6}>
                                             <FormField
                                                 colonne={column}
                                                 title={column.title}
@@ -193,64 +196,27 @@ const ListeMpiangonaDrag = ({title})=> {
                     </>
                 )
             }
-            {/* <input type="file" onChange={e => setFile(e.target.files[0])} />
-            <Button type="button" onClick={importerFile}>Importer</Button> 
-            </div> */}
+
         </div>
     );
-    const footer = `TOTAL : ${totalRecords.toLocaleString()} `;
-    const itemTemplate = (mpiangona, index) => {
-        return (
-            <div className="col-12 sm:col-12 lg:col-12 xl:col-12 p-2">
-                <Card title={renderColumnData(mpiangona, titleTable[0])}>
-                    {titleTable.map((column, index2) => (
-                        (!column.isExtra || showExtraColumns) && (
-                            index2 > 0 && (
-                                <div key={index2}>
-                                    <strong>{column.title}:</strong> {renderColumnData(mpiangona, column)}
-                                </div>
-                            )
-                        )
-                    ))}
-                </Card>
-            </div>
-        );
-    };
-
-    const listTemplate = (items) => {
-        if (!items || items.length === 0) return null;
-
-        let list = items.map((mpiangona, index) => {
-            return itemTemplate(mpiangona, index);
-        });
-
-        return <div className="grid grid-nogutter" style={{ maxHeight: '350px', 'overflow': 'auto' }}>{list}</div>;
-    };
 
     useEffect(() => {
-        onPage(lazyParams);
+        //onPage(lazyParams);
+        filtrer()
     }, []);
     return (
         <>
             <div className="container">
-                <Card title={title}>
+                <Card title={'Statistique Mpandray'}>
                     <Row>
                         <Col md={12}>
-                            <DataView
-                                value={data}
-                                lazy
-                                paginator
-                                layout={'grid'}
-                                totalRecords={totalRecords}
-                                rows={lazyParams.rows}
-                                first={lazyParams.first}
-                                loading={loading}
-                                header={header}
-                                listTemplate={listTemplate}
-                                footer={footer}
-                                onPage={onPage}
-                            >
-                            </DataView>
+                            {header}
+                        </Col>
+                        <Col md={12}>
+                            <HighchartsReact
+                                highcharts={Highcharts}
+                                options={options}
+                            />
                         </Col>
                     </Row>
                 </Card>
@@ -259,9 +225,9 @@ const ListeMpiangonaDrag = ({title})=> {
     );
 }
 
-ListeMpiangonaDrag.propTypes = {
-    title: PropTypes.string
-}
+// StatistiqueMpandray.propTypes = {
+//     title: PropTypes.string
+// }
 
 
-export default ListeMpiangonaDrag;
+export default StatistiqueMpandray;

@@ -20,6 +20,25 @@ module.exports = function (app) {
             serv.analyseError(err).then(error=>{res.send(error)})
         });
     });
+    app.post("/mpiangona-state-mpandray",(req,res)=>{
+        mpiangServ.getStatistiqueMpandray(req.body)
+        .then(data => {
+            res.json(data);
+        }).catch(err => {
+            res.status(err.status || 400);
+            serv.analyseError(err).then(error=>{res.send(error)})
+        });
+    });
+
+    app.post("/mpiangona-state-batisa",(req,res)=>{
+        mpiangServ.getStatistiqueBatisa(req.body)
+        .then(data => {
+            res.json(data);
+        }).catch(err => {
+            res.status(err.status || 400);
+            serv.analyseError(err).then(error=>{res.send(error)})
+        });
+    });
     app.post("/mpiangonas/:num/:nombrepage",(req,res)=>{
         mpiangServ.getAll(req.body,req.params.num,req.params.nombrepage)
         .then(data => {

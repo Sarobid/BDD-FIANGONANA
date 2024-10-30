@@ -5,13 +5,23 @@ import Billing from "layouts/billing";
 import Dashboard from "layouts/dashboard";
 import Distribution from "layouts/distribution/Distribution";
 import GestionMpiangona from "layouts/Mpiangona/GestionMpiangona";
+import StatistiqueMpiangona from "layouts/Mpiangona/StatistiqueMpiangona";
 import Profile from "layouts/profile";
 import RTL from "layouts/rtl";
 import Tables from "layouts/tables";
 import VirtualReality from "layouts/virtual-reality";
 
 const routes = [
-
+  {
+    type: "route",
+    name: "Statistique Mpiangona",
+    key: "Statistique Mpiangona",
+    route: "/Statistique-Mpiangona",
+    icon: (
+      <ArgonBox component="i" color="warning" fontSize="14px" className="ni ni-calendar-grid-58" />
+    ),
+    component: <StatistiqueMpiangona />,
+  },
   {
     type: "route",
     name: "Distribution Dekonina",

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, Col, Row } from "react-bootstrap";
+import * as XLSX from 'xlsx/xlsx.mjs';
 import mpiangonaServ from "../services/mpiangona/mpiangonaService";
 import serv from "../services/service";
 
@@ -9,12 +10,13 @@ import { DataTable } from 'primereact/datatable';
 import FormField from "../services/FormField";
 
 import PropTypes from 'prop-types';
+import dekoninaServ from "services/dekonina/dekoninaService";
 
 const titleSheet = [
     //{title:"NUMERO",
     { title: "N° FICHE", data: "numfichempiangona" },
     //{title:"MPANAO SAISIE",
-    //{title:"DIAKONA MPIAHY",
+    { title: "DIAKONA MPIAHY", data: "nomcompletmpiangona" },
     { title: "ADIRESY", data: "adressempiangona" },
     { title: "ANARANA", data: "nommpiangona" },
     { title: "FANAMPINY 1", data: "prenommpiangona" },
@@ -87,38 +89,59 @@ const titleSheet = [
 ];
 
 
-const ListeMpiangona = ({title})=> {
-    // const [file, setFile] = useState(null);
-    // const importerFile = () => {
-    //     if (file) {
-    //         const reader = new FileReader();
-    //         reader.onload = (e) => {
-    //             const data = new Uint8Array(e.target.result);
-    //             const workbook = XLSX.read(data, { type: 'array' });
-    //             const donnee = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
-    //             //console.log("donnee", donnee);
-    //             donnee.forEach(value => {
-    //                 let d = {};
-    //                 for (let i = 0; i < titleSheet.length; i++) {
-    //                     if (value[titleSheet[i].title]) {
-    //                         if (titleSheet[i].traitement) {
-    //                             d[titleSheet[i].data] = titleSheet[i].traitement(value[titleSheet[i].title])
-    //                         } else {
-    //                             d[titleSheet[i].data] = value[titleSheet[i].title];
-    //                         }
-    //                     }
-    //                 }
-    //                 console.log("d", d);
-    //                 mpiangonaServ.addMpiangona(d, (data) => {
-    //                     console.log("data", data);
-    //                 }, (error) => {
-    //                     console.log("error", error);
-    //                 })
-    //             })
-    //         };
-    //         reader.readAsArrayBuffer(file);
-    //     }
-    // };
+const ListeMpiangona = ({ title }) => {
+    const [file, setFile] = useState(null);
+    const importerFile = async () => {  // Marquez la fonction comme async
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = async (e) => {  // Ajoutez async ici aussi
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const donnee = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+
+                    for (const value of donnee) {
+                        let d = {};
+                        for (let i = 0; i < titleSheet.length; i++) {
+                            if (value[titleSheet[i].title]) {
+                                if (titleSheet[i].traitement) {
+                                    d[titleSheet[i].data] = titleSheet[i].traitement(value[titleSheet[i].title]);
+                                } else {
+                                    d[titleSheet[i].data] = value[titleSheet[i].title];
+                                }
+                            }
+                        }
+                        console.log("d", d);
+
+                        if (d['nomcompletmpiangona']) {
+                            let numfichempiangona = d['numfichempiangona'];
+                            try {
+                                const res = await mpiangonaServ.getAllMpiangonaAsync({ "nomcompletmpiangona": d['nomcompletmpiangona'] }, 1, 2);
+                                console.log(res);
+                                let mpiangonaid = "";
+
+                                if (res.length === 0) {
+                                    const response = await mpiangonaServ.addMpiangona({ "nomcompletmpiangona": d['nomcompletmpiangona'] });
+                                    console.log("add Mpiangona", response);
+                                    mpiangonaid = response.data[0]['mpiangonaid'];
+                                } else {
+                                    mpiangonaid = res[0]['mpiangonaid'];
+                                }
+                                let rep = await dekoninaServ.adddekonina({ 'mpiangonaid': mpiangonaid });
+                                rep = await dekoninaServ.addFicheDekonina({ 'mpiangonaid': mpiangonaid, 'numfichempiangona': numfichempiangona });
+                            } catch (error) {
+                                console.log("donnee",d,error)
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error("Erreur lors de l'importation du fichier :", error);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+    };
+
     const [num, setNum] = useState(1);
     const [data, setData] = useState([]);
     const [totalRecords, setTotalRecords] = useState(0);
@@ -128,8 +151,9 @@ const ListeMpiangona = ({title})=> {
     const titleTable = [
         { title: "N° FICHE", data: "numfichempiangona", typeData: 'input' },
         { title: "ADIRESY", data: "adressempiangona", typeData: 'input' },
-        { title: "ANARANA", data: "nommpiangona", typeData: 'input' },
-        { title: "FANAMPINY 1", data: "prenommpiangona", typeData: 'input' },
+        { title: "Nom/Prenom", data: "nomcompletmpiangona", typeData: 'input' },
+        { title: "ANARANA", data: "nommpiangona",isExtra:true, typeData: 'input' },
+        { title: "FANAMPINY 1", data: "prenommpiangona",isExtra:true, typeData: 'input' },
         {
             title: "DATY NAHATERAHANA", data: "datenaissancempiangona", typeData: 'date', isExtra: true, traitement: (value) => {
                 return serv.converteNombreEnDate(value);
@@ -144,6 +168,11 @@ const ListeMpiangona = ({title})=> {
         {
             title: "LAHY/ VAVY", data: "codegenrempiangona", typeData: 'select', getOptions: () => {
                 return mpiangonaServ.getAllOpions("codegenrempiangona")
+            }
+        },
+        {
+            title: "DEKONINA", data: "estdekonina", typeData: 'select', getOptions: () => {
+                return mpiangonaServ.getAllOpions("estdekonina")
             }
         },
         {
@@ -169,7 +198,7 @@ const ListeMpiangona = ({title})=> {
             }
         },
         { title: "TOERANA NANDRAISANA", data: "lieumpandray", typeData: 'input', isExtra: true },
-        { title: "N° KARATRA MPANDRAY", data: "karatrampandray",isExtra: true, typeData: 'input' },
+        { title: "N° KARATRA MPANDRAY", data: "karatrampandray", isExtra: true, typeData: 'input' },
         { title: "RAY", data: "nompere", isExtra: true, typeData: 'input' },
         { title: "RENY", data: "nommere", isExtra: true, typeData: 'input' },
         {
@@ -219,7 +248,8 @@ const ListeMpiangona = ({title})=> {
 
     const onPage = async (event) => {
         setLoading(true);
-        const pageNumber = event.first
+        const pageNumber = event.first / event.rows + 1;
+        console.log("Numéro de page :", pageNumber);
         fetchDataForPage(pageNumber, event.rows, (data, totalPage) => {
             setData(data);
             setTotalRecords(totalPage);
@@ -248,7 +278,7 @@ const ListeMpiangona = ({title})=> {
     }
 
     const header = (
-        <div className="flex flex-wrap align-items-center justify-content-between gap-2" style={{padding:"10px"}}>
+        <div className="flex flex-wrap align-items-center justify-content-between gap-2" style={{ padding: "10px" }}>
             <Button
                 onClick={toggleExtraColumns}
                 variant="info"
@@ -288,14 +318,14 @@ const ListeMpiangona = ({title})=> {
                                 </Col>
                             </Row>
                         </Card>
-                            
+
                     </>
                 )
             }
-            {/* <input type="file" onChange={e => setFile(e.target.files[0])} />
-            <Button type="button" onClick={importerFile}>Importer</Button> 
+            {/* <div><input type="file" onChange={e => setFile(e.target.files[0])} />
+                <Button type="button" onClick={importerFile}>Importer</Button>
             </div> */}
-        </div>
+        </div >
     );
     const footer = `TOTAL : ${totalRecords.toLocaleString()}`;
     useEffect(() => {
