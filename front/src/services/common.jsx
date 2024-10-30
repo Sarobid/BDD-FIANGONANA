@@ -1,4 +1,4 @@
-const urlHtpp = "http://127.0.0.1:8083";
+const urlHtpp = "https://back-bdd-fiangonana-1.onrender.com";
 const url = {
     urlHtpp
   };
