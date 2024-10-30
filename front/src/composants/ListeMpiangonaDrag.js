@@ -11,13 +11,13 @@ import FormField from "../services/FormField";
 
 
 
-const ListeMpiangonaDrag = ({title})=> {
+const ListeMpiangonaDrag = ({title,filterValue0})=> {
     const [num, setNum] = useState(1);
     const [data, setData] = useState([]);
     const [totalRecords, setTotalRecords] = useState(0);
     const [loading, setLoading] = useState(true);
     const [lazyParams, setLazyParams] = useState({ first: 0, rows: 5 });
-    const [filterValues, setFilterValues] = useState({});
+    const [filterValues, setFilterValues] = useState(filterValue0);
     const titleTable = [
         { title: "N° FICHE", data: "numfichempiangona", typeData: 'input' },
         { title: "ADIRESY", data: "adressempiangona", typeData: 'input' },
@@ -46,7 +46,7 @@ const ListeMpiangonaDrag = ({title})=> {
                 return mpiangonaServ.getAllOpions("estdekonina")
             }
         },
-        { title: "Famille distribue", data: "nombrefiche", typeData: 'input' },
+        { title: "Famille distribue", data: "nombrefiche", typeData: 'number' },
         {
             title: "DATY BATISA", data: "datebatisa", typeData: 'date',isExtra:true, traitement: (value) => {
                 return serv.converteNombreEnDate(value);
@@ -107,7 +107,7 @@ const ListeMpiangonaDrag = ({title})=> {
         return column.traitementAffiche ? column.traitementAffiche(value) : value;
     };
     const fetchDataForPage = (pageNumber, pageSize, traiteApres) => {
-        //console.log(filterValues)
+        console.log("lsiete drag mpoiangona",filterValues)
         mpiangonaServ.getAllMpiangona(filterValues, pageNumber, pageSize, (data, totalPage) => {
             console.log("data", data);
             console.log("data", totalPage);
@@ -260,7 +260,8 @@ const ListeMpiangonaDrag = ({title})=> {
 }
 
 ListeMpiangonaDrag.propTypes = {
-    title: PropTypes.string
+    title: PropTypes.string,
+    filterValue0 : PropTypes.object
 }
 
 

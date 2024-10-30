@@ -13,25 +13,22 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 // react-router components
-import { useLocation, Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 // prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
 
 // @mui core components
 import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Menu from "@mui/material/Menu";
 import Icon from "@mui/material/Icon";
+import Menu from "@mui/material/Menu";
+import Toolbar from "@mui/material/Toolbar";
 
 // Argon Dashboard 2 MUI components
 import ArgonBox from "components/ArgonBox";
-import ArgonTypography from "components/ArgonTypography";
-import ArgonInput from "components/ArgonInput";
 
 // Argon Dashboard 2 MUI example components
 import Breadcrumbs from "examples/Breadcrumbs";
@@ -41,23 +38,21 @@ import NotificationItem from "examples/Items/NotificationItem";
 import {
   navbar,
   navbarContainer,
-  navbarRow,
-  navbarIconButton,
   navbarDesktopMenu,
-  navbarMobileMenu,
+  navbarRow
 } from "examples/Navbars/DashboardNavbar/styles";
 
 // Argon Dashboard 2 MUI context
 import {
-  useArgonController,
-  setTransparentNavbar,
   setMiniSidenav,
   setOpenConfigurator,
+  setTransparentNavbar,
+  useArgonController,
 } from "context";
 
 // Images
-import team2 from "assets/images/team-2.jpg";
 import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
+import team2 from "assets/images/team-2.jpg";
 
 function DashboardNavbar({ absolute, light, isMini }) {
   const [navbarType, setNavbarType] = useState();
@@ -160,7 +155,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
         </ArgonBox>
         {isMini ? null : (
           <ArgonBox sx={(theme) => navbarRow(theme, { isMini })}>
-            <ArgonBox pr={1}>
+            {/* <ArgonBox pr={1}>
               <ArgonInput
                 placeholder="Type here..."
                 startAdornment={
@@ -169,8 +164,8 @@ function DashboardNavbar({ absolute, light, isMini }) {
                   </Icon>
                 }
               />
-            </ArgonBox>
-            <ArgonBox color={light ? "white" : "inherit"}>
+            </ArgonBox> */}
+            {/* <ArgonBox color={light ? "white" : "inherit"}>
               <Link to="/authentication/sign-in/basic">
                 <IconButton sx={navbarIconButton} size="small">
                   <Icon
@@ -217,7 +212,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
                 <Icon>notifications</Icon>
               </IconButton>
               {renderMenu()}
-            </ArgonBox>
+            </ArgonBox> */}
           </ArgonBox>
         )}
       </Toolbar>

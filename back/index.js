@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 var corsOptions = {
-    origin: ["http://localhost:5173","http://localhost:3000","http://41.188.43.90:8082"]
+    origin: ["*","http://localhost:3000"]
 };
 app.use(cors(corsOptions));
 

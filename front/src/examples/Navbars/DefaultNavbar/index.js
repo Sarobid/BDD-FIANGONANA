@@ -14,7 +14,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 // prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
@@ -23,13 +23,13 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
 // @mui material components
-import Icon from "@mui/material/Icon";
 import Container from "@mui/material/Container";
+import Icon from "@mui/material/Icon";
 
 // Argon Dashboard 2 MUI components
 import ArgonBox from "components/ArgonBox";
-import ArgonTypography from "components/ArgonTypography";
 import ArgonButton from "components/ArgonButton";
+import ArgonTypography from "components/ArgonTypography";
 
 // Argon Dashboard 2 MUI examples components
 import DefaultNavbarLink from "examples/Navbars/DefaultNavbar/DefaultNavbarLink";

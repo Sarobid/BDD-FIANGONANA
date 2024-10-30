@@ -17,17 +17,16 @@ Coded by www.creative-tim.com
 import PropTypes from "prop-types";
 
 // @mui material components
-import Collapse from "@mui/material/Collapse";
+import Icon from "@mui/material/Icon";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import Icon from "@mui/material/Icon";
 
 // Argon Dashboard 2 MUI components
 import ArgonBox from "components/ArgonBox";
 
 // Custom styles for the sidenavItem
-import { item, itemIcon, itemText, itemIconBox } from "examples/Sidenav/styles/sidenavItem";
+import { item, itemIcon, itemIconBox, itemText } from "examples/Sidenav/styles/sidenavItem";
 
 // Argon Dashboard 2 MUI context
 import { useArgonController } from "context";
@@ -35,7 +34,8 @@ import { useArgonController } from "context";
 function SidenavItem({ icon, name, active, open, ...rest }) {
   const [controller] = useArgonController();
   const { miniSidenav, darkSidenav, sidenavColor } = controller;
-
+  //alert(active)
+  //active = true
   return (
     <>
       <ListItem component="li">

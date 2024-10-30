@@ -123,6 +123,10 @@ const StatistiqueBatisa = () => {
         chart: {
             type: 'column' // Type de graphique (par exemple 'line', 'bar', 'pie', etc.)
         },
+        title: {
+            text: '' ,// Titre vide pour ne pas l'afficher
+            enable:false
+        },
         xAxis: {
             categories: ['Mpandray']
         },

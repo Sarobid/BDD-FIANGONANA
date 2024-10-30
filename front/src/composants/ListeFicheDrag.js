@@ -10,13 +10,13 @@ import ficheServ from "../services/fiche/ficheService";
 
 
 
-const ListeFicheDrag = ({title})=> {
+const ListeFicheDrag = ({title,filterValue0})=> {
     const [num, setNum] = useState(1);
     const [data, setData] = useState([]);
     const [totalRecords, setTotalRecords] = useState(0);
     const [loading, setLoading] = useState(true);
     const [lazyParams, setLazyParams] = useState({ first: 0, rows: 5 });
-    const [filterValues, setFilterValues] = useState({});
+    const [filterValues, setFilterValues] = useState(filterValue0);
     const titleTable = [
         { title: "N° FICHE", data: "numfichempiangona", typeData: 'input' },
         { title: "Nombre famille", data: "nombrempiangona", typeData: 'number' },
@@ -45,10 +45,8 @@ const ListeFicheDrag = ({title})=> {
         return column.traitementAffiche ? column.traitementAffiche(value) : value;
     };
     const fetchDataForPage = (pageNumber, pageSize, traiteApres) => {
-        //console.log(filterValues)
+        //alert(JSON.stringify(filterValues))
         ficheServ.getAllFiche(filterValues, pageNumber, pageSize, (data, totalPage) => {
-            console.log("data", data);
-            console.log("data", totalPage);
             traiteApres(data, totalPage)
             setNum(num)
         }, (error) => {
@@ -205,7 +203,9 @@ const ListeFicheDrag = ({title})=> {
 }
 
 ListeFicheDrag.propTypes = {
-    title: PropTypes.string
+    title: PropTypes.string,
+    
+    filterValue0 : PropTypes.object
 }
 
 export default ListeFicheDrag;

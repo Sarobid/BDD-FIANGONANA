@@ -1,6 +1,9 @@
 import axios from 'axios';
 import url from '../common';
 const ficheServ = {
+    getStateFiche : async (legende,param)=>{
+        return  await axios.post(url.urlHtpp+"/statistique-fiche",{legende:legende,filter:param})
+    },
     getAllFiche : (data,num,pageSize,traiteSucces,traiteError)=>{
         if(num <= 0){
             num=1;

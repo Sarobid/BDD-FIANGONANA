@@ -143,6 +143,21 @@ async function getAll(mpiangona, num, nombrePage) {
             }
         }
     }
+    if(mpiangona['nombrefiche']){
+        if(mpiangona['nombrefiche']!==""){
+            condition += " and nombrefiche=" + mpiangona['nombrefiche'] + "";
+        }
+    }
+    if(mpiangona['nombrefichemin']){
+        if(mpiangona['nombrefichemin']!==""){
+            condition += " and nombrefiche>=" + mpiangona['nombrefichemin'] + "";
+        }
+    }
+    if(mpiangona['nombrefichemax']){
+        if(mpiangona['nombrefichemax']!==""){
+            condition += " and nombrefiche<=" + mpiangona['nombrefichemax'] + "";
+        }
+    }
     let offset = (num - 1) * nombrePage;
     let sql = `select * from v_mpiangona where 1=1 ${condition} order by nomcompletmpiangona offset ${offset} limit ${nombrePage}`;
     let sql2 = `select count(*) as total from v_mpiangona where 1=1 ${condition}`;

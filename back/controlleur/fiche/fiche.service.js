@@ -56,6 +56,8 @@ async function getAll(param, num, nombrePage) {
             condition += " and UPPER(b.adressempiangona) like'%" + param['adressempiangona'].toUpperCase() + "%'";
         }
     }
+    console.log(param)
+    console.log(condition)
     let offset = (num - 1) * nombrePage;
     let sql = `select distinct a.* from v_fiche a join v_ficheadresse b 
         on b.numfichempiangona=a.numfichempiangona
@@ -81,6 +83,73 @@ async function getAll(param, num, nombrePage) {
 }
 exports.getAll = getAll;
 
+async function getStatistiqueFiche(body,param) {
+    let condition = "";
+    if(param['numfichempiangona']){
+        if(param['numfichempiangona']!==""){
+            condition += " and a.numfichempiangona='" + param['numfichempiangona'] + "'";
+        }
+    }
+    if(param['adressempiangona']){
+        if(param['adressempiangona']!==""){
+            condition += " and UPPER(b.adressempiangona) like'%" + param['adressempiangona'].toUpperCase() + "%'";
+        }
+    }
+    let sqlColone = traitementSQLEnteteMinMax("s.nombredekonina",body);
+    let sql = `select name,code,color,SUM(value) as value from ( select ${sqlColone.colonne} ,count(*) as value from (select distinct a.* from v_fiche a join v_ficheadresse b 
+        on b.numfichempiangona=a.numfichempiangona
+        where 1=1 ${condition})s group by s.nombredekonina,${sqlColone.group} ) l group by name,code,color`;
+        console.log(sql);
+    try {
+        let d = await client.query(sql);
+        return d.rows ;
+    } catch (error) {
+        throw error;
+    }
+}
+exports.getStatistiqueFiche = getStatistiqueFiche;
+
+function traitementSQLEnteteMinMax(colonneName,body){
+    let initialCode = " CASE ";
+    let initialName = " CASE ";
+    let initialColor = " CASE ";
+    for (let i = 0; i < body.length; i++) {
+        console.log(body[i]);
+        let colonneMinMax = " WHEN 1=1 ";
+        let min = "";
+        let max = "";
+        if(body[i]['min'] !== undefined && body[i]['min'] !== null){
+            min = body[i]['min']
+            colonneMinMax += " and "+colonneName+" >= "+body[i]['min']+" ";
+        }
+        if(body[i]['max'] !== undefined && body[i]['max'] !== null){
+            max = body[i]['max']
+            colonneMinMax += " and "+colonneName+" <= "+body[i]['max']+" ";
+        }
+         initialCode += colonneMinMax+ " then '"+min+";"+max+"' ";
+         initialName += colonneMinMax+ " then '";
+         let n = "";
+         if(min!==""){
+            n+=" Superieur a "+min;
+         }
+         if(max!==""){
+            if(n!== ""){
+                n+=" et "
+            }
+            n+=" Inferieur a "+min;
+         }
+         initialName+=n+"' ";
+         initialColor += colonneMinMax +" then '"+body[i]["color"]+"' ";
+    }
+    initialCode +=" ELSE 'Non definie' end ";
+    initialName +=" ELSE 'Non definie' end ";
+    initialColor +=" ELSE 'black' end  ";
+    return {colonne:initialCode+" as code ,"+initialName+" as name ,"+initialColor+" as color ",
+        group : initialCode+","+initialName+","+initialColor
+    };
+}
+
+exports.traitementSQLEnteteMinMax = traitementSQLEnteteMinMax;
 async function getAdressesFiche(numfiche){
     let sql = "select * from v_ficheadresse a where a.numfichempiangona='"+numfiche+"'";
     try {

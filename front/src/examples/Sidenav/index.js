@@ -13,34 +13,33 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 // react-router-dom components
-import { useLocation, NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 
 // prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
 
 // @mui material components
-import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
-import Link from "@mui/material/Link";
 import Icon from "@mui/material/Icon";
+import Link from "@mui/material/Link";
+import List from "@mui/material/List";
 
 // Argon Dashboard 2 MUI components
 import ArgonBox from "components/ArgonBox";
 import ArgonTypography from "components/ArgonTypography";
 
 // Argon Dashboard 2 MUI example components
-import SidenavItem from "examples/Sidenav/SidenavItem";
 import SidenavFooter from "examples/Sidenav/SidenavFooter";
+import SidenavItem from "examples/Sidenav/SidenavItem";
 
 // Custom styles for the Sidenav
 import SidenavRoot from "examples/Sidenav/SidenavRoot";
-import sidenavLogoLabel from "examples/Sidenav/styles/sidenav";
 
 // Argon Dashboard 2 MUI context
-import { useArgonController, setMiniSidenav } from "context";
+import { setMiniSidenav, useArgonController } from "context";
 
 function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const [controller, dispatch] = useArgonController();
@@ -134,21 +133,20 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           </ArgonTypography>
         </ArgonBox>
         <ArgonBox component={NavLink} to="/" display="flex" alignItems="center">
-          {brand && (
-            <ArgonBox component="img" src={brand} alt="Argon Logo" width="2rem" mr={0.25} />
-          )}
-          <ArgonBox
-            width={!brandName && "100%"}
-            sx={(theme) => sidenavLogoLabel(theme, { miniSidenav })}
-          >
-            <ArgonTypography
-              component="h6"
-              variant="button"
-              fontWeight="medium"
+          <ArgonBox position="relative" textAlign="center">
+            <ArgonBox component="img" src={'/shem-footer.jpg'} alt="sidebar_illustration" width="90%" />
+            <ArgonBox
+              width="100%"
+              pb={2}
+              px={2}
               color={darkSidenav ? "white" : "dark"}
+              textAlign="center"
+              lineHeight={0}
             >
-              {brandName}
-            </ArgonTypography>
+              <ArgonTypography color="inherit" variant="h6">
+                FJKM Isotry Fitiavana
+              </ArgonTypography>
+            </ArgonBox>
           </ArgonBox>
         </ArgonBox>
       </ArgonBox>
