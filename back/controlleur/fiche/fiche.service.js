@@ -118,11 +118,11 @@ function traitementSQLEnteteMinMax(colonneName,body){
         let colonneMinMax = " WHEN 1=1 ";
         let min = "";
         let max = "";
-        if(body[i]['min'] !== undefined && body[i]['min'] !== null){
+        if(body[i]['min'] !== undefined && body[i]['min'] !== null && body[i]['min'] !== ''){
             min = body[i]['min']
             colonneMinMax += " and "+colonneName+" >= "+body[i]['min']+" ";
         }
-        if(body[i]['max'] !== undefined && body[i]['max'] !== null){
+        if(body[i]['max'] !== undefined && body[i]['max'] !== null && body[i]['max'] !== ''){
             max = body[i]['max']
             colonneMinMax += " and "+colonneName+" <= "+body[i]['max']+" ";
         }

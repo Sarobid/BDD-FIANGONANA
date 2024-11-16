@@ -9,24 +9,26 @@ import * as Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import dekoninaServ from "services/dekonina/dekoninaService";
 import mpiangonaServ from "services/mpiangona/mpiangonaService";
+import Critere from "./Critere";
 import DistributionComposant from "./DistributionComposant";
 
+import PropTypes from 'prop-types';
 
 
-const StatistiqueDekonina = () => {
+const StatistiqueDekonina = ({onClickChart}) => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filterValues, setFilterValues] = useState({});
-    const [legendes,setLegendes] = useState([{'min':0,'max':0,'color':'red'},
-        {'min':1,'max':1,'color':'yellow'},
-        {'min':2,'color':'green'},
+    const [legendes, setLegendes] = useState([{ 'min': 0, 'max': 0, 'color': 'red' },
+    { 'min': 1, 'max': 1, 'color': 'yellow' },
+    { 'min': 2, 'color': 'green' },
     ]);
     const titleTable = [
         { title: "N° FICHE", data: "numfichempiangona", typeData: 'input' },
         { title: "ADIRESY", data: "adressempiangona", typeData: 'input' },
         { title: "Nom/Prenom", data: "nomcompletmpiangona", typeData: 'input' },
-        { title: "ANARANA", data: "nommpiangona",isExtra:true, typeData: 'input' },
-        { title: "FANAMPINY 1", data: "prenommpiangona",isExtra:true, typeData: 'input' },
+        { title: "ANARANA", data: "nommpiangona", isExtra: true, typeData: 'input' },
+        { title: "FANAMPINY 1", data: "prenommpiangona", isExtra: true, typeData: 'input' },
         {
             title: "DATY NAHATERAHANA", data: "datenaissancempiangona", typeData: 'date', isExtra: true, traitement: (value) => {
                 return serv.converteNombreEnDate(value);
@@ -39,24 +41,24 @@ const StatistiqueDekonina = () => {
             }
         },
         {
-            title: "LAHY/ VAVY", data: "codegenrempiangona", typeData: 'select',isExtra:true, getOptions: () => {
+            title: "LAHY/ VAVY", data: "codegenrempiangona", typeData: 'select', isExtra: true, getOptions: () => {
                 return mpiangonaServ.getAllOpions("codegenrempiangona")
             }
         },
         {
-            title: "DEKONINA", data: "estdekonina", typeData: 'select',isExtra:true, getOptions: () => {
+            title: "DEKONINA", data: "estdekonina", typeData: 'select', isExtra: true, getOptions: () => {
                 return mpiangonaServ.getAllOpions("estdekonina")
             }
         },
-        { title: "Famille distribue", data: "nombrefiche",isExtra:true, typeData: 'input' },
+        { title: "Famille distribue", data: "nombrefiche", isExtra: true, typeData: 'input' },
         {
-            title: "DATY BATISA", data: "datebatisa", typeData: 'date',isExtra:true, traitement: (value) => {
+            title: "DATY BATISA", data: "datebatisa", typeData: 'date', isExtra: true, traitement: (value) => {
                 return serv.converteNombreEnDate(value);
             }
         },
         { title: "TOERANA NANAOVANA BATISA", typeData: 'input', isExtra: true, data: "lieubatisa" },
         {
-            title: "MPANDRAY/ KATEKOMENA", data: "estmpandray",isExtra:true, typeData: 'select', getOptions: () => {
+            title: "MPANDRAY/ KATEKOMENA", data: "estmpandray", isExtra: true, typeData: 'select', getOptions: () => {
                 return mpiangonaServ.getAllOpions("estmpandray")
             }
         },
@@ -114,25 +116,32 @@ const StatistiqueDekonina = () => {
 
     const toggleFilter = () => {
         setShowFilter(prevState => !prevState);
+        setShowCritere(false)
+    };
+    const [showCritere, setShowCritere] = useState(false);
+
+    const toggleCritere = () => {
+        setShowCritere(prevState => !prevState);
+        setShowFilter(false)
     };
     const handleFilterChange = (key, value) => {
         setFilterValues(prev => ({ ...prev, [key]: value }));
     };
 
-    const [critereDetails,setCritereDetails] = useState({})
+    const [critereDetails, setCritereDetails] = useState({})
 
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-    
+
     const options = {
         chart: {
             type: 'column' // Type de graphique (par exemple 'line', 'bar', 'pie', etc.)
         },
         title: {
-            text: '' ,// Titre vide pour ne pas l'afficher
-            enable:false
+            text: '',// Titre vide pour ne pas l'afficher
+            enable: false
         },
         xAxis: {
             categories: ['Repartition Fiche']
@@ -151,15 +160,16 @@ const StatistiqueDekonina = () => {
                             const min = seriesData.min;
                             const max = seriesData.max;
                             let d = {}
-                            if(min!== null){
+                            if (min !== null) {
                                 d['nombrefichemin'] = String(min)
                             }
-                            if(max!== null){
+                            if (max !== null) {
                                 d['nombrefichemax'] = String(max)
                             }
                             setCritereDetails(d);
-                            handleShow();
-                         }
+                            onClickChart(d)
+                            //handleShow();
+                        }
                     }
                 }
             }
@@ -169,21 +179,22 @@ const StatistiqueDekonina = () => {
     const filtrer = async () => {
         console.log(filterValues)
         try {
-            let d = await dekoninaServ.getStateDekonina(legendes,filterValues);
+            let d = await dekoninaServ.getStateDekonina(legendes, filterValues);
             let donnee = [];
             for (let i = 0; i < d.data.length; i++) {
-                let min,max = null;
+                let min, max = null;
                 let c = d.data[i]['code'].split(";");
                 console.log(c);
-                if(c[0]){
+                if (c[0]) {
                     min = parseInt(c[0]);
                 }
-                if(c[1]){
+                if (c[1]) {
                     max = parseInt(c[1]);
                 }
                 donnee.push(
-                    { name: d.data[i]['name'], data: [Number(d.data[i]['value'])], color: d.data[i]['color'] 
-                        ,min:min,max:max
+                    {
+                        name: d.data[i]['name'], data: [Number(d.data[i]['value'])], color: d.data[i]['color']
+                        , min: min, max: max
                     })
             }
             setData(donnee);
@@ -196,29 +207,33 @@ const StatistiqueDekonina = () => {
         filtrer()
     }, []);
     const header = (
-        <div className="flex flex-wrap align-items-center justify-content-between gap-2">
-            <Button
-                onClick={toggleFilter}
-                variant="success"
-            >
-                {showFilter ? "Recherche moins" : "Recherche"}
-            </Button>
-            <Button
-                variant="info"
-            >
-                {"Change Critere"}
-            </Button>
+        <>
+            <div className="flex flex-wrap align-items-center justify-content-between gap-2">
+                <Button
+                    onClick={toggleFilter}
+                    variant="success"
+                >
+                    {showFilter ? "Recherche moins" : "Recherche"}
+                </Button>
+                <Button
+                    onClick={toggleCritere}
+                    variant="info"
+                >
+                    {showCritere ? "desaffiche critere" : "Change Critere"}
+                </Button>
+
+            </div>
             {
                 showFilter && (
                     <>
                         <Card>
                             <Col sm={12}>
-                            <Button
-                                onClick={toggleExtraColumns}
-                                variant="info"
-                            >
-                                {showExtraColumns ? "Afficher moins" : "Afficher plus"}
-                            </Button>
+                                <Button
+                                    onClick={toggleExtraColumns}
+                                    variant="info"
+                                >
+                                    {showExtraColumns ? "Afficher moins" : "Afficher plus"}
+                                </Button>
                             </Col>
                             <Row>
                                 {titleTable.map((column, index) => (
@@ -246,8 +261,23 @@ const StatistiqueDekonina = () => {
                     </>
                 )
             }
-
-        </div>
+            {
+                showCritere && (
+                    <>
+                        <Card>
+                            <Critere legendes={legendes} setLegendes={setLegendes} />
+                            <Col sm={12}>
+                                <div className="d-grid gap-2">
+                                    <Button variant="primary" onClick={filtrer}>
+                                        Filter
+                                    </Button>
+                                </div>
+                            </Col>
+                        </Card>
+                    </>
+                )
+            }
+        </>
     );
 
     return (
@@ -267,13 +297,13 @@ const StatistiqueDekonina = () => {
                     </Row>
                 </Card>
             </div>
-            
+
             {/* MODAL */}
             <Modal size="lg" show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>Distribution</Modal.Title>
                 </Modal.Header>
-                <Modal.Body><DistributionComposant filterDekonina={critereDetails} filterFiche={{'nombredekoninamin':'0','nombredekoninamax':'0'}} /></Modal.Body>
+                <Modal.Body><DistributionComposant filterDekonina={critereDetails} filterFiche={{ 'nombredekoninamin': '0', 'nombredekoninamax': '0' }} /></Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>
                         Close
@@ -283,5 +313,7 @@ const StatistiqueDekonina = () => {
         </>
     );
 }
-
+StatistiqueDekonina.propTypes = {
+    onClickChart: PropTypes.func,
+}
 export default StatistiqueDekonina;

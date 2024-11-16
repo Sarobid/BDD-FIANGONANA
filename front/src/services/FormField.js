@@ -56,6 +56,27 @@ const FormField = ({ colonne, title, type, onchange, value }) => {
                 </Col>
             </Row>
         );
+    }else if (type === "numbersimple") {
+        return (
+            <FloatingLabel controlId="floatingInput" label={title} className="mb-3">
+                <Form.Control type="number" value={value} onChange={e => onchange(e.target.value)} />
+            </FloatingLabel>
+        );
+    }
+    else if (type === "color") {
+        // Utilisation d'une valeur par défaut si "value" n'est pas définie
+        const colorValue = value || "#000000"; 
+    
+        return (
+            <FloatingLabel controlId="floatingInput" label={title} className="mb-3">
+                <Form.Control
+                    type="color"
+                    value={colorValue}
+                    onChange={e => onchange(e.target.value)}
+                    style={{ width: '100%' }}
+                />
+            </FloatingLabel>
+        );
     }
     return null;
 };

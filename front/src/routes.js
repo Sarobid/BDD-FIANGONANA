@@ -1,5 +1,6 @@
 import ArgonBox from "components/ArgonBox";
 import Distribution from "layouts/distribution/Distribution";
+import ListDekonina from "layouts/distribution/ListDekonina";
 import StatistiqueDistribution from "layouts/distribution/StatistiqueDistribution";
 import GestionMpiangona from "layouts/Mpiangona/GestionMpiangona";
 import StatistiqueMpiangona from "layouts/Mpiangona/StatistiqueMpiangona";
@@ -14,6 +15,16 @@ const routes = [
       <ArgonBox component="i" color="warning" fontSize="14px" className="ni ni-chart-bar-32" />
     ),
     component: <StatistiqueDistribution />,
+  },
+  {
+    type: "route",
+    name: "Repartition dekonina",
+    key: "Repartition-dekonina",
+    route: "/Repartition-dekonina",
+    icon: (
+      <ArgonBox component="i" color="warning" fontSize="14px" className="ni ni-chart-bar-32" />
+    ),
+    component: <ListDekonina />,
   },
   {
     type: "route",

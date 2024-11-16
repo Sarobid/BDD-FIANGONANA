@@ -226,10 +226,15 @@ const ListeMpiangonaDrag = ({title,filterValue0})=> {
 
         return <div className="grid grid-nogutter" style={{ maxHeight: '350px', 'overflow': 'auto' }}>{list}</div>;
     };
-
     useEffect(() => {
+        // Met à jour filterValues lorsque filterValue0 change
+        setFilterValues(filterValue0);
+    }, [filterValue0]);
+    
+    useEffect(() => {
+        // Relancer la recherche lorsque filterValues change
         onPage(lazyParams);
-    }, []);
+    }, [filterValues]);
     return (
         <>
             <div className="container">
