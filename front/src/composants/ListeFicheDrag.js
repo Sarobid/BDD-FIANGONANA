@@ -163,7 +163,7 @@ const ListeFicheDrag = ({ title, filterValue0 ,ficheCheckeds, setFicheChecked,af
 
         return (
             <div className="col-12 sm:col-6 lg:col-12 xl:col-12 p-2" key={index}>
-                <Card title={ afficheChecked === false ?  renderColumnData(mpiangona, titleTable[0]) : head}>
+                <Card title={ afficheChecked === false ?  renderColumnData(mpiangona, titleTable[0]) : mpiangona['nombredekonina'] === '0' ? head : renderColumnData(mpiangona, titleTable[0])}>
                     {titleTable.map((column, index2) => (
                         (!column.isExtra || showExtraColumns) && (
                             index2 > 0 && (
