@@ -51,6 +51,11 @@ async function getAll(param, num, nombrePage) {
             condition += " and a.numfichempiangona='" + param['numfichempiangona'] + "'";
         }
     }
+    if(param['dekoninaid']){
+        if(param['dekoninaid']!==""){
+            condition += " and c.mpiangonaid=" + param['dekoninaid'] + "";
+        }
+    }
     if(param['adressempiangona']){
         if(param['adressempiangona']!==""){
             condition += " and UPPER(b.adressempiangona) like'%" + param['adressempiangona'].toUpperCase() + "%'";
@@ -60,12 +65,13 @@ async function getAll(param, num, nombrePage) {
     console.log(condition)
     let offset = (num - 1) * nombrePage;
     let sql = `select distinct a.* from v_fiche a join v_ficheadresse b 
-        on b.numfichempiangona=a.numfichempiangona
+        on b.numfichempiangona=a.numfichempiangona left join distributiondekonina c on c.numfiche=a.numfichempiangona 
         where 1=1 ${condition} order by a.numfichempiangona offset ${offset} limit ${nombrePage}`;
     let sql2 = `select count(*) as total from (select distinct a.* from v_fiche a join v_ficheadresse b 
-        on b.numfichempiangona=a.numfichempiangona
+        on b.numfichempiangona=a.numfichempiangona left join distributiondekonina c on c.numfiche=a.numfichempiangona
         where 1=1 ${condition})s `;
     try {
+        console.log(sql)
         let d = await client.query(sql);
         let total = await client.query(sql2);
         let totalPage = 0;

@@ -12,6 +12,11 @@ const mpiangonaServ = {
         console.log("data "+colonne,data)
         return data.data;
     },
+    getDeatilsMpiangona : async (id)=>{
+        let data = await axios.get(url.urlHtpp+"/mpiangona/"+id)
+        console.log("data ",data)
+        return data.data;
+    },
     getAllMpiangona : (data,num,pageSize,traiteSucces,traiteError)=>{
         if(num <= 0){
             num=1;

@@ -8,11 +8,13 @@ import FormField from "../services/FormField";
 import * as Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import ficheServ from "services/fiche/ficheService";
+import Critere from "./Critere";
 import DistributionComposant from "./DistributionComposant";
 
+import PropTypes from 'prop-types';
 
 
-const StatistiqueFiche = () => {
+const StatistiqueFiche = ({onClickChart}) => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filterValues, setFilterValues] = useState({});
@@ -43,6 +45,13 @@ const StatistiqueFiche = () => {
     };
     const handleFilterChange = (key, value) => {
         setFilterValues(prev => ({ ...prev, [key]: value }));
+        setShowCritere(false);
+    };
+    const [showCritere, setShowCritere] = useState(false);
+
+    const toggleCritere = () => {
+        setShowCritere(prevState => !prevState);
+        setShowFilter(false)
     };
     const options = {
         chart: {
@@ -76,7 +85,9 @@ const StatistiqueFiche = () => {
                             }
                             //alert(`Vous avez cliqué sur ${this.series.name} avec une valeur de ${this.y}. Min: ${min}, Max: ${max} ${JSON.stringify(d)}`);                        
                             setCritereDetails(d);
-                            handleShow();
+                            onClickChart(d)
+
+                            //handleShow();
                          }
                     }
                 }
@@ -114,18 +125,22 @@ const StatistiqueFiche = () => {
         filtrer()
     }, []);
     const header = (
-        <div className="flex flex-wrap align-items-center justify-content-between gap-2">
-            <Button
-                onClick={toggleFilter}
-                variant="success"
-            >
-                {showFilter ? "Recherche moins" : "Recherche"}
-            </Button>
-            <Button
-                variant="info"
-            >
-                {"Change Critere"}
-            </Button>
+        <>
+            <div className="flex flex-wrap align-items-center justify-content-between gap-2">
+                <Button
+                    onClick={toggleFilter}
+                    variant="success"
+                >
+                    {showFilter ? "Recherche moins" : "Recherche"}
+                </Button>
+                <Button
+                    onClick={toggleCritere}
+                    variant="info"
+                >
+                    {showCritere ? "desaffiche critere" : "Change Critere"}
+                </Button>
+
+            </div>
             {
                 showFilter && (
                     <>
@@ -164,8 +179,23 @@ const StatistiqueFiche = () => {
                     </>
                 )
             }
-
-        </div>
+            {
+                showCritere && (
+                    <>
+                        <Card>
+                            <Critere legendes={legendes} setLegendes={setLegendes} />
+                            <Col sm={12}>
+                                <div className="d-grid gap-2">
+                                    <Button variant="primary" onClick={filtrer}>
+                                        Filter
+                                    </Button>
+                                </div>
+                            </Col>
+                        </Card>
+                    </>
+                )
+            }
+        </>
     );
 
     return (
@@ -200,5 +230,7 @@ const StatistiqueFiche = () => {
         </>
     );
 }
-
+StatistiqueFiche.propTypes = {
+    onClickChart: PropTypes.func,
+}
 export default StatistiqueFiche;

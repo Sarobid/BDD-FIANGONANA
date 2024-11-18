@@ -176,6 +176,21 @@ async function getAll(mpiangona, num, nombrePage) {
 }
 exports.getAll = getAll;
 
+async function findById(id){
+    if(id){
+        let sql = `select * from v_mpiangona where 1=1 and mpiangonaid=${id}`;
+        try {
+            let d = await client.query(sql);
+            return d.rows;
+        } catch (error) {
+            throw error;
+        }
+    }else{
+        return [];
+    }
+}
+exports.findById = findById;
+
 async function insertion(mpiangona) {
     console.log("mpiangona", mpiangona);
     let values = [];

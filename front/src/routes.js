@@ -1,9 +1,13 @@
 import ArgonBox from "components/ArgonBox";
+import Billing from "layouts/billing";
 import Distribution from "layouts/distribution/Distribution";
 import ListDekonina from "layouts/distribution/ListDekonina";
+import ListeFiche from "layouts/distribution/ListeFiche";
 import StatistiqueDistribution from "layouts/distribution/StatistiqueDistribution";
 import GestionMpiangona from "layouts/Mpiangona/GestionMpiangona";
 import StatistiqueMpiangona from "layouts/Mpiangona/StatistiqueMpiangona";
+import Profile from "layouts/profile";
+import Tables from "layouts/tables";
 
 const routes = [
   {
@@ -25,6 +29,16 @@ const routes = [
       <ArgonBox component="i" color="warning" fontSize="14px" className="ni ni-chart-bar-32" />
     ),
     component: <ListDekonina />,
+  },
+  {
+    type: "route",
+    name: "Repartition Fiche",
+    key: "Repartition-Fiche",
+    route: "/Repartition-Fiche",
+    icon: (
+      <ArgonBox component="i" color="warning" fontSize="14px" className="ni ni-chart-bar-32" />
+    ),
+    component: <ListeFiche />,
   },
   {
     type: "route",
@@ -64,50 +78,33 @@ const routes = [
   //   icon: <ArgonBox component="i" color="primary" fontSize="14px" className="ni ni-tv-2" />,
   //   component: <Dashboard />,
   // },
-  // {
-  //   type: "route",
-  //   name: "Tables",
-  //   key: "tables",
-  //   route: "/tables",
-  //   icon: (
-  //     <ArgonBox component="i" color="warning" fontSize="14px" className="ni ni-calendar-grid-58" />
-  //   ),
-  //   component: <Tables />,
-  // },
+  {
+    type: "route",
+    name: "Tables",
+    key: "tables",
+    route: "/tables",
+    icon: (
+      <ArgonBox component="i" color="warning" fontSize="14px" className="ni ni-calendar-grid-58" />
+    ),
+    component: <Tables />,
+  },
 
-  // {
-  //   type: "route",
-  //   name: "Billing",
-  //   key: "billing",
-  //   route: "/billing",
-  //   icon: <ArgonBox component="i" color="success" fontSize="14px" className="ni ni-credit-card" />,
-  //   component: <Billing />,
-  // },
-  // {
-  //   type: "route",
-  //   name: "Virtual Reality",
-  //   key: "virtual-reality",
-  //   route: "/virtual-reality",
-  //   icon: <ArgonBox component="i" color="info" fontSize="14px" className="ni ni-app" />,
-  //   component: <VirtualReality />,
-  // },
-  // {
-  //   type: "route",
-  //   name: "RTL",
-  //   key: "rtl",
-  //   route: "/rtl",
-  //   icon: <ArgonBox component="i" color="error" fontSize="14px" className="ni ni-world-2" />,
-  //   component: <RTL />,
-  // },
-  // { type: "title", title: "Account Pages", key: "account-pages" },
-  // {
-  //   type: "route",
-  //   name: "Profile",
-  //   key: "profile",
-  //   route: "/profile",
-  //   icon: <ArgonBox component="i" color="dark" fontSize="14px" className="ni ni-single-02" />,
-  //   component: <Profile />,
-  // },
+  {
+    type: "route",
+    name: "Billing",
+    key: "billing",
+    route: "/billing",
+    icon: <ArgonBox component="i" color="success" fontSize="14px" className="ni ni-credit-card" />,
+    component: <Billing />,
+  },
+  {
+    type: "route",
+    name: "Profile",
+    key: "profile",
+    route: "/profile",
+    icon: <ArgonBox component="i" color="dark" fontSize="14px" className="ni ni-single-02" />,
+    component: <Profile />,
+  },
   // {
   //   type: "route",
   //   name: "Sign In",

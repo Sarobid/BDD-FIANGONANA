@@ -1,30 +1,37 @@
 import PropTypes from 'prop-types';
 
 import { useEffect, useState } from "react";
-import { Button, Col, Row } from "react-bootstrap";
+import { Button, Col, Form, Offcanvas, Row } from "react-bootstrap";
 import mpiangonaServ from "../services/mpiangona/mpiangonaService";
 import serv from "../services/service";
 
+import ArgonBox from 'components/ArgonBox';
 import { Card } from "primereact/card";
 import { DataView } from "primereact/dataview";
 import FormField from "../services/FormField";
+import DetailsMpiangona from './DetailsMpiangona';
 
 
 
-const ListeMpiangonaDrag = ({title,filterValue0})=> {
+//const [selectedDekonina, setSelectedDekonina] = useState(null);
+const ListeMpiangonaDrag = ({ title, filterValue0, selectedDekonina, setSelectedDekonina }) => {
     const [num, setNum] = useState(1);
     const [data, setData] = useState([]);
     const [totalRecords, setTotalRecords] = useState(0);
     const [loading, setLoading] = useState(true);
     const [lazyParams, setLazyParams] = useState({ first: 0, rows: 5 });
     const [filterValues, setFilterValues] = useState(filterValue0);
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+    const [mpiangonaid,setMpiangonaid] = useState("");
     const titleTable = [
-        { title: "N° FICHE", data: "numfichempiangona", typeData: 'input' },
-        { title: "ADIRESY", data: "adressempiangona", typeData: 'input' },
         { title: "Nom/Prenom", data: "nomcompletmpiangona", typeData: 'input' },
-        { title: "ANARANA", data: "nommpiangona",isExtra:true, typeData: 'input' },
-        { title: "FANAMPINY 1", data: "prenommpiangona",isExtra:true, typeData: 'input' },
-        
+        { title: "N° FICHE", data: "numfichempiangona", isExtra: true, typeData: 'input' },
+        { title: "ANARANA", data: "nommpiangona", isExtra: true, typeData: 'input' },
+        { title: "FANAMPINY 1", data: "prenommpiangona", isExtra: true, typeData: 'input' },
+
         {
             title: "DATY NAHATERAHANA", data: "datenaissancempiangona", typeData: 'date', isExtra: true, traitement: (value) => {
                 return serv.converteNombreEnDate(value);
@@ -37,24 +44,26 @@ const ListeMpiangonaDrag = ({title,filterValue0})=> {
             }
         },
         {
-            title: "LAHY/ VAVY", data: "codegenrempiangona", typeData: 'select',isExtra:true, getOptions: () => {
+            title: "LAHY/ VAVY", data: "codegenrempiangona", typeData: 'select', getOptions: () => {
                 return mpiangonaServ.getAllOpions("codegenrempiangona")
             }
         },
+        { title: "ADIRESY", data: "adressempiangona", typeData: 'input' },
+
         {
-            title: "DEKONINA", data: "estdekonina", typeData: 'select', getOptions: () => {
+            title: "DEKONINA", data: "estdekonina", typeData: 'select', isExtra: true, getOptions: () => {
                 return mpiangonaServ.getAllOpions("estdekonina")
             }
         },
         { title: "Famille distribue", data: "nombrefiche", typeData: 'number' },
         {
-            title: "DATY BATISA", data: "datebatisa", typeData: 'date',isExtra:true, traitement: (value) => {
+            title: "DATY BATISA", data: "datebatisa", typeData: 'date', isExtra: true, traitement: (value) => {
                 return serv.converteNombreEnDate(value);
             }
         },
         { title: "TOERANA NANAOVANA BATISA", typeData: 'input', isExtra: true, data: "lieubatisa" },
         {
-            title: "MPANDRAY/ KATEKOMENA", data: "estmpandray",isExtra:true, typeData: 'select', getOptions: () => {
+            title: "MPANDRAY/ KATEKOMENA", data: "estmpandray", isExtra: true, typeData: 'select', getOptions: () => {
                 return mpiangonaServ.getAllOpions("estmpandray")
             }
         },
@@ -107,7 +116,7 @@ const ListeMpiangonaDrag = ({title,filterValue0})=> {
         return column.traitementAffiche ? column.traitementAffiche(value) : value;
     };
     const fetchDataForPage = (pageNumber, pageSize, traiteApres) => {
-        console.log("lsiete drag mpoiangona",filterValues)
+        console.log("lsiete drag mpoiangona", filterValues)
         mpiangonaServ.getAllMpiangona(filterValues, pageNumber, pageSize, (data, totalPage) => {
             console.log("data", data);
             console.log("data", totalPage);
@@ -200,14 +209,43 @@ const ListeMpiangonaDrag = ({title,filterValue0})=> {
     );
     const footer = `TOTAL : ${totalRecords.toLocaleString()} `;
     const itemTemplate = (mpiangona, index) => {
+        const isChecked = selectedDekonina?.mpiangonaid === mpiangona.mpiangonaid;
+        const handleDetails = ()=>{
+            setMpiangonaid(mpiangona.mpiangonaid)
+            handleShow();
+        }
+        let head = (
+            <>
+                <div className="flex flex-wrap align-items-center justify-content-between gap-2">
+                    <h3 style={{ fontWeight: "bold" }}><Form.Check
+                        type="radio"
+                        id={`radio-${index}`}
+                        name="mpiangona-radio"
+                        label={renderColumnData(mpiangona, titleTable[0])}
+                        value={mpiangona.mpiangonaid}
+                        checked={isChecked}
+                        onChange={() => setSelectedDekonina(mpiangona)}
+                    /></h3>
+                    <ArgonBox mr={1}>
+                        <div>
+                            <Button variant='warning' onClick={handleDetails}>
+                                <ArgonBox component="i" color="warning" fontSize="14px" className="ni ni-single-02" />
+                                {"Plus d'information"}
+                            </Button>
+
+                        </div>
+                    </ArgonBox>
+                </div>
+            </>
+        )
         return (
-            <div className="col-12 sm:col-12 lg:col-12 xl:col-12 p-2">
-                <Card title={renderColumnData(mpiangona, titleTable[0])}>
+            <div className="col-12 sm:col-12 lg:col-12 xl:col-12 p-2" key={index}>
+                <Card title={head}>
                     {titleTable.map((column, index2) => (
                         (!column.isExtra || showExtraColumns) && (
                             index2 > 0 && (
                                 <div key={index2}>
-                                    <strong>{column.title}:</strong> {renderColumnData(mpiangona, column)}
+                                    {column.title}: &nbsp;&nbsp; <strong>{renderColumnData(mpiangona, column)}</strong>
                                 </div>
                             )
                         )
@@ -230,7 +268,7 @@ const ListeMpiangonaDrag = ({title,filterValue0})=> {
         // Met à jour filterValues lorsque filterValue0 change
         setFilterValues(filterValue0);
     }, [filterValue0]);
-    
+
     useEffect(() => {
         // Relancer la recherche lorsque filterValues change
         onPage(lazyParams);
@@ -260,13 +298,22 @@ const ListeMpiangonaDrag = ({title,filterValue0})=> {
                     </Row>
                 </Card>
             </div>
+            <Offcanvas show={show} onHide={handleClose}  placement={'end'} name={'end'} style={{ width: '75%' }}>
+                <Offcanvas.Header closeButton>
+                </Offcanvas.Header>
+                <Offcanvas.Body>
+                    <DetailsMpiangona mpiangonaid={mpiangonaid}/>
+                </Offcanvas.Body>
+            </Offcanvas>
         </>
     );
 }
 
 ListeMpiangonaDrag.propTypes = {
     title: PropTypes.string,
-    filterValue0 : PropTypes.object
+    filterValue0: PropTypes.object,
+    setSelectedDekonina: PropTypes.func,
+    selectedDekonina: PropTypes.object,
 }
 
 

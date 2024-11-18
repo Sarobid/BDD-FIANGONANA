@@ -2,6 +2,15 @@ var mpiangServ = require("./mpiangona.service");
 var serv = require("../../service/errorService");
 
 module.exports = function (app) {
+    app.get("/mpiangona/:id",(req,res)=>{
+        mpiangServ.findById(req.params.id)
+        .then(data => {
+            res.json(data);
+        }).catch(err => {
+            res.status(err.status || 400);
+            serv.analyseError(err).then(error=>{res.send(error)})
+        });
+    })
     app.get("/mpiangona/option/:option",(req,res)=>{
         mpiangServ.getAllOptions(req.params.option)
         .then(data => {
