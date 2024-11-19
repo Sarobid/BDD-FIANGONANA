@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 var corsOptions = {
-    origin: ["http://localhost:3000"]
+    origin: ["https://front-isotry-ft.onrender.com","http://localhost:3000"]
 };
 app.use(cors(corsOptions));
 

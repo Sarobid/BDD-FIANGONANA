@@ -1,11 +1,7 @@
 import ArgonBox from "components/ArgonBox";
-import Billing from "layouts/billing";
 import ListDekonina from "layouts/distribution/ListDekonina";
 import ListeFiche from "layouts/distribution/ListeFiche";
-import GestionMpiangona from "layouts/Mpiangona/GestionMpiangona";
 import StatistiqueMpiangona from "layouts/Mpiangona/StatistiqueMpiangona";
-import Profile from "layouts/profile";
-import Tables from "layouts/tables";
 
 const routes = [
   // {
@@ -58,51 +54,51 @@ const routes = [
   //   ),
   //   component: <Distribution />,
   // },
-  {
-    type: "route",
-    name: "Gestion Mpiangona",
-    key: "Gestion-Mpiangona",
-    route: "/Gestion-Mpiangona",
-    icon: (
-      <ArgonBox component="i" color="warning" fontSize="14px" className="ni ni-single-02" />
-    ),
-    component: <GestionMpiangona />,
-  },
   // {
   //   type: "route",
-  //   name: "Dashboard",
-  //   key: "dashboard",
-  //   route: "/dashboard",
-  //   icon: <ArgonBox component="i" color="primary" fontSize="14px" className="ni ni-tv-2" />,
-  //   component: <Dashboard />,
+  //   name: "Gestion Mpiangona",
+  //   key: "Gestion-Mpiangona",
+  //   route: "/Gestion-Mpiangona",
+  //   icon: (
+  //     <ArgonBox component="i" color="warning" fontSize="14px" className="ni ni-single-02" />
+  //   ),
+  //   component: <GestionMpiangona />,
   // },
-  {
-    type: "route",
-    name: "Tables",
-    key: "tables",
-    route: "/tables",
-    icon: (
-      <ArgonBox component="i" color="warning" fontSize="14px" className="ni ni-calendar-grid-58" />
-    ),
-    component: <Tables />,
-  },
+  // // {
+  // //   type: "route",
+  // //   name: "Dashboard",
+  // //   key: "dashboard",
+  // //   route: "/dashboard",
+  // //   icon: <ArgonBox component="i" color="primary" fontSize="14px" className="ni ni-tv-2" />,
+  // //   component: <Dashboard />,
+  // // },
+  // {
+  //   type: "route",
+  //   name: "Tables",
+  //   key: "tables",
+  //   route: "/tables",
+  //   icon: (
+  //     <ArgonBox component="i" color="warning" fontSize="14px" className="ni ni-calendar-grid-58" />
+  //   ),
+  //   component: <Tables />,
+  // },
 
-  {
-    type: "route",
-    name: "Billing",
-    key: "billing",
-    route: "/billing",
-    icon: <ArgonBox component="i" color="success" fontSize="14px" className="ni ni-credit-card" />,
-    component: <Billing />,
-  },
-  {
-    type: "route",
-    name: "Profile",
-    key: "profile",
-    route: "/profile",
-    icon: <ArgonBox component="i" color="dark" fontSize="14px" className="ni ni-single-02" />,
-    component: <Profile />,
-  },
+  // {
+  //   type: "route",
+  //   name: "Billing",
+  //   key: "billing",
+  //   route: "/billing",
+  //   icon: <ArgonBox component="i" color="success" fontSize="14px" className="ni ni-credit-card" />,
+  //   component: <Billing />,
+  // },
+  // {
+  //   type: "route",
+  //   name: "Profile",
+  //   key: "profile",
+  //   route: "/profile",
+  //   icon: <ArgonBox component="i" color="dark" fontSize="14px" className="ni ni-single-02" />,
+  //   component: <Profile />,
+  // },
   // {
   //   type: "route",
   //   name: "Sign In",
