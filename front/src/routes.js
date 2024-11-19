@@ -21,8 +21,8 @@ const routes = [
   {
     type: "route",
     name: "Repartition dekonina",
-    key: "Repartition-dekonina",
-    route: "/Repartition-dekonina",
+    key: "dashboard",
+    route: "/dashboard",
     icon: (
       <ArgonBox component="i" color="warning" fontSize="14px" className="ni ni-chart-bar-32" />
     ),
