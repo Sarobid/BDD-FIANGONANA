@@ -77,6 +77,7 @@ function ListDekonina() {
                                                 setDekonina={setDekoninaSelected}
                                                  fiches={ficheCheckeds}
                                                 setFiches = {setFicheCheCkeds}
+                                                actionApresValidation={()=>{window.location.reload() }}
                                                 />
                                             </Card>
                                         </Grid>
@@ -88,6 +89,7 @@ function ListDekonina() {
                                                     ficheCheckeds={ficheCheckeds}
                                                     setFicheChecked={setFicheCheCkeds}
                                                     afficheChecked={true}
+                                                    eventApresDesaffectation={()=>{window.location.reload() }}
                                                 />
                                             </Card>
                                         </Grid>

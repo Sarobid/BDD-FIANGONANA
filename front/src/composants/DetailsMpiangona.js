@@ -183,10 +183,11 @@ function DetailsMpiangona({ mpiangonaid }) {
                                                     <Tab eventKey="dekonina" title="Liste des fiches">
                                                         <ListeFicheDrag
                                                             title=""
-                                                            filterValue0={{ dekoninaid: mpiangona['mpiangonaid'] }}
+                                                            filterValue0={{ dekoninaid: mpiangona['mpiangonaid'] , nombredekoninamin:'1' }}
                                                             ficheCheckeds={[]}
                                                             setFicheChecked={(s) => { }}
                                                             afficheChecked={false}
+                                                            eventApresDesaffectation={()=>{getDetails()}}
                                                         />
                                                     </Tab>
 
@@ -203,6 +204,7 @@ function DetailsMpiangona({ mpiangonaid }) {
                                                                         setDekonina={setDekoninaSelected}
                                                                         fiches={ficheCheckeds}
                                                                         setFiches={setFicheCheCkeds}
+                                                                        actionApresValidation={()=>{getDetails() }}
                                                                     />
                                                                 </Card>
                                                             </Grid>

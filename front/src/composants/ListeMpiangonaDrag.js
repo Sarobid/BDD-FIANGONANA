@@ -232,7 +232,6 @@ const ListeMpiangonaDrag = ({ title, filterValue0, selectedDekonina, setSelected
                                 <ArgonBox component="i" color="warning" fontSize="14px" className="ni ni-single-02" />
                                 {"Plus d'information"}
                             </Button>
-
                         </div>
                     </ArgonBox>
                 </div>

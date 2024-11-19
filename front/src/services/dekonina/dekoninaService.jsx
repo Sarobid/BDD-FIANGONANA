@@ -10,5 +10,9 @@ const dekoninaServ = {
     addFicheDekonina : async (data)=>{
         return await axios.post(url.urlHtpp+"/dekonina-fiche", data);
     }
+    ,
+    finFicheDekonina : async (numfiche)=>{
+        return await axios.post(url.urlHtpp+"/dekonina-fiche-fin", {numfichempiangona:numfiche});
+    }
  }
  export default dekoninaServ;

@@ -1,0 +1,5 @@
+.pagination .page-item.active .page-link {
+    background-color: #c83209 !important; /* Couleur de fond pour l'élément actif */
+    color: white !important;              /* Couleur du texte */
+    border-color: #c83209 !important;     /* Couleur de la bordure */
+}

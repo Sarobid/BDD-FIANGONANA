@@ -2,8 +2,10 @@ const client = require("../../db");
 const objetkeys = ['numfichempiangona', 'adressempiangona', 'nommpiangona', 'prenommpiangona', 'nomcompletmpiangona', 'datenaissancempiangona', 'codegenrempiangona', 'datebatisa', 'lieubatisa', 'estmpandray', 'datempandray', 'lieumpandray', 'karatrampandray', 'nompere', 'nommere', 'telephone', 'email', 'estvadysoratra', 'estvadymasina', 'matyvady', 'nisarabady', 'asampiangona', 'lieuasa']
 //const critereFiltre = ['numfichempiangona','adressempiangona','nommpiangona','prenommpiangona','nomcompletmpiangona','datenaissancempiangona','codegenrempiangona','datebatisa','lieubatisa','estmpandray','datempandray','lieumpandray','karatrampandray','nompere','nommere','telephone','email','estvadysoratra','estvadymasina','matyvady','nisarabady','asampiangona','lieuasa']
 const critereFiltre = [
+    { title: "Date debut", data: "datedebut", typeData: 'date' },{ title: "Date Fin", data: "datefin", typeData: 'date' },
     { title: "Nom/Prenom", data: "nomcompletmpiangona", typeData: 'input' },
-    { title: "N° FICHE", data: "numfichempiangona", typeData: 'input' },
+    { title: "N° FICHE", data: "numfichempiangona", typeData: 'select' },
+    { title: "N° FICHE", data: "numfiche", typeData: 'select' },
     { title: "ADIRESY", data: "adressempiangona", typeData: 'input' },
     { title: "ANARANA", data: "nommpiangona", typeData: 'input' },
     { title: "ANARANA", data: "nommpiangona", typeData: 'input' },
@@ -40,6 +42,58 @@ const critereFiltre = [
     { title: "ASA", data: "asampiangona", typeData: 'input' },
     { title: "TOERANA IASANA", data: "lieuasa", typeData: 'input' }
 ]
+
+async function getDekoninaMpiahy(mpiangona, num, nombrePage){
+    console.log("mpiangona", mpiangona)
+    let condition = "";
+    for (let i = 0; i < critereFiltre.length; i++) {
+        if (mpiangona[critereFiltre[i].data]) {
+            if (mpiangona[critereFiltre[i].data] !== "") {
+                if (critereFiltre[i].typeData === 'input') {
+                    condition += " and UPPER(" + critereFiltre[i].data + "::TEXT) like '%" + mpiangona[critereFiltre[i].data].toUpperCase() + "%' ";
+                } else if (critereFiltre[i].typeData === 'select') {
+                    condition += " and " + critereFiltre[i].data + "='" + mpiangona[critereFiltre[i].data] + "'";
+                } else if (critereFiltre[i].typeData === 'date') {
+                    condition += " and " + critereFiltre[i].data + "='" + mpiangona[critereFiltre[i].data] + "'";
+                }
+                else if (critereFiltre[i].typeData === 'string') {
+                    condition += " and UPPER(" + critereFiltre[i].data + ")='" + mpiangona[critereFiltre[i].data].toUpperCase() + "'";
+                }
+            }
+        }
+    }
+    if(mpiangona['nombrefiche']){
+        if(mpiangona['nombrefiche']!==""){
+            condition += " and nombrefiche=" + mpiangona['nombrefiche'] + "";
+        }
+    }
+    if(mpiangona['nombrefichemin']){
+        if(mpiangona['nombrefichemin']!==""){
+            condition += " and nombrefiche>=" + mpiangona['nombrefichemin'] + "";
+        }
+    }
+    if(mpiangona['nombrefichemax']){
+        if(mpiangona['nombrefichemax']!==""){
+            condition += " and nombrefiche<=" + mpiangona['nombrefichemax'] + "";
+        }
+    }
+    let offset = (num - 1) * nombrePage;
+    let sql = `select a.numfiche,a.datedebut,a.datefin,b.* from distributiondekonina a join v_mpiangona b on b.mpiangonaid=a.mpiangonaid where 1=1 ${condition} order by a.datedebut,a.mpiangonaid desc  offset ${offset} limit ${nombrePage}`;
+    let sql2 = `select count(*) as total from distributiondekonina a join v_mpiangona b on b.mpiangonaid=a.mpiangonaid where 1=1 ${condition}`;
+    console.log(sql)
+    try {
+        let d = await client.query(sql);
+        let total = await client.query(sql2);
+        let totalPage = 0;
+        if (total.rowCount >= 1) {
+            totalPage = total.rows[0]['total'];
+        }
+        return { data: d.rows, totalPage: totalPage };
+    } catch (error) {
+        throw error;
+    }
+}
+exports.getDekoninaMpiahy = getDekoninaMpiahy;
 async function getStatistiqueBatisa(mpiangona) {
     console.log("mpandray state", mpiangona)
     let condition = "";
@@ -161,7 +215,7 @@ async function getAll(mpiangona, num, nombrePage) {
     let offset = (num - 1) * nombrePage;
     let sql = `select * from v_mpiangona where 1=1 ${condition} order by nomcompletmpiangona offset ${offset} limit ${nombrePage}`;
     let sql2 = `select count(*) as total from v_mpiangona where 1=1 ${condition}`;
-    console.log(sql)
+   // console.log(sql)
     try {
         let d = await client.query(sql);
         let total = await client.query(sql2);

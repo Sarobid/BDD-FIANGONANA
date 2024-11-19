@@ -105,3 +105,20 @@ async function addFicheDekonina(body){
     }
 }
 exports.addFicheDekonina = addFicheDekonina;
+
+async function finFicheDekonina(body){
+    console.log(body);
+    try {
+        if(body.numfichempiangona === ""){
+            throw new Error("Num fiche doit etre declarer");
+        }
+        let values = [body.numfichempiangona];
+        let sql = `UPDATE "public".distributiondekonina SET datefin=now() where numfiche=$1 and datefin is null`
+        let d = await client.query(sql,values);
+        return d.rows;
+    } catch (error) {
+        throw error;
+    }
+}
+exports.finFicheDekonina = finFicheDekonina;
+

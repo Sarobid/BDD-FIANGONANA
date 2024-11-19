@@ -1,22 +1,33 @@
 import PropTypes from 'prop-types';
 import { useEffect, useState } from "react";
-import { Button, Col, Form, ListGroup, Row } from "react-bootstrap";
+import { Button, Col, Form, ListGroup, Offcanvas, Row } from "react-bootstrap";
 
 
+import { Icon } from '@mui/material';
+import ArgonBox from 'components/ArgonBox';
+import ArgonButton from 'components/ArgonButton';
 import { Card } from "primereact/card";
 import { DataView } from "primereact/dataview";
+import dekoninaServ from 'services/dekonina/dekoninaService';
 import FormField from "../services/FormField";
 import ficheServ from "../services/fiche/ficheService";
+import DetailsFiche from './DetailsFiche';
 
 
 //  const [ficheCheckeds, setFicheChecked] = useState([]);
-const ListeFicheDrag = ({ title, filterValue0 ,ficheCheckeds, setFicheChecked,afficheChecked}) => {
+const ListeFicheDrag = ({ title, filterValue0, ficheCheckeds, setFicheChecked, afficheChecked,eventApresDesaffectation }) => {
     const [num, setNum] = useState(1);
     const [data, setData] = useState([]);
     const [totalRecords, setTotalRecords] = useState(0);
     const [loading, setLoading] = useState(true);
     const [lazyParams, setLazyParams] = useState({ first: 0, rows: 5 });
     const [filterValues, setFilterValues] = useState(filterValue0);
+
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+    const [numFiche, setNumFiche] = useState(null)
     const titleTable = [
         { title: "N° FICHE", data: "numfichempiangona", typeData: 'input' },
         { title: "Nombre famille", data: "nombrempiangona", typeData: 'number' },
@@ -146,24 +157,68 @@ const ListeFicheDrag = ({ title, filterValue0 ,ficheCheckeds, setFicheChecked,af
                 return [...prevState, mpiangona];
             }
         });
-      
+
     };
 
-
+    const handleDesaffecter = async (numfiche) => {
+        let data = await dekoninaServ.finFicheDekonina(numfiche);
+        onPage(lazyParams);
+        if(eventApresDesaffectation){
+            eventApresDesaffectation();
+        }
+    }
     const itemTemplate = (mpiangona, index) => {
+        const handleDetails = () => {
+            setNumFiche(mpiangona.numfichempiangona)
+            handleShow()
+        }
         let head = (
-            <Form.Check
-                type="switch"
-                id={"custom-switch" + mpiangona.numfichempiangona}
-                label={renderColumnData(mpiangona, titleTable[0])}
-                checked={ficheCheckeds.some(item => item.numfichempiangona === mpiangona.numfichempiangona)}
-                onChange={() => handleCheckboxChange(mpiangona)}
-            />
+            <>
+
+                <div className="flex flex-wrap align-items-center justify-content-between gap-2">
+                    <h3 style={{ fontWeight: "bold" }}>
+                        <Form.Check
+                            type="switch"
+                            id={"custom-switch" + mpiangona.numfichempiangona}
+                            label={renderColumnData(mpiangona, titleTable[0])}
+                            checked={ficheCheckeds.some(item => item.numfichempiangona === mpiangona.numfichempiangona)}
+                            onChange={() => handleCheckboxChange(mpiangona)}
+                        />
+                        </h3>
+                    <ArgonBox mr={1}>
+                        <div>
+                            <Button variant='warning' onClick={handleDetails}>
+                                <ArgonBox component="i" color="warning" fontSize="14px" className="ni ni-single-02" />
+                                {"Plus d'information"}
+                            </Button>
+                        </div>
+                    </ArgonBox>
+                </div>
+            </>
+        )
+        let head2 = (
+            <>
+                <div className="flex flex-wrap align-items-center justify-content-between gap-2">
+                    <h3 style={{ fontWeight: "bold" }}>{renderColumnData(mpiangona, titleTable[0])}</h3>
+                    <ArgonBox mr={1}>
+                        <div onClick={()=>{handleDesaffecter(mpiangona.numfichempiangona)}}>
+                            <ArgonButton variant="text" color="error">
+                                <Icon>delete</Icon>&nbsp;Desaffecter
+                            </ArgonButton>
+                            </div>
+                            <Button variant='warning' onClick={handleDetails}>
+                                <ArgonBox component="i" color="warning" fontSize="14px" className="ni ni-single-02" />
+                                {"Plus d'information"}
+                            </Button>
+                        
+                    </ArgonBox>
+                </div>
+            </>
         )
 
         return (
             <div className="col-12 sm:col-6 lg:col-12 xl:col-12 p-2" key={index}>
-                <Card title={ afficheChecked === false ?  renderColumnData(mpiangona, titleTable[0]) : mpiangona['nombredekonina'] === '0' ? head : renderColumnData(mpiangona, titleTable[0])}>
+                <Card title={afficheChecked === false ? mpiangona['nombredekonina'] === '0' ? head : head2: mpiangona['nombredekonina'] === '0' ? head : head2}>
                     {titleTable.map((column, index2) => (
                         (!column.isExtra || showExtraColumns) && (
                             index2 > 0 && (
@@ -198,11 +253,12 @@ const ListeFicheDrag = ({ title, filterValue0 ,ficheCheckeds, setFicheChecked,af
         // Met à jour filterValues lorsque filterValue0 change
         setFilterValues(filterValue0);
     }, [filterValue0]);
-    
+
     useEffect(() => {
         // Relancer la recherche lorsque filterValues change
         onPage(lazyParams);
     }, [filterValues]);
+    
     return (
         <>
             <div className="container">
@@ -228,6 +284,13 @@ const ListeFicheDrag = ({ title, filterValue0 ,ficheCheckeds, setFicheChecked,af
                     </Row>
                 </Card>
             </div>
+            <Offcanvas show={show} onHide={handleClose} placement={'end'} name={'end'} style={{ width: '75%' }}>
+                <Offcanvas.Header closeButton>
+                </Offcanvas.Header>
+                <Offcanvas.Body>
+                    <DetailsFiche numfiche={numFiche} />
+                </Offcanvas.Body>
+            </Offcanvas>
         </>
     );
 }
@@ -236,9 +299,10 @@ ListeFicheDrag.propTypes = {
     title: PropTypes.string,
 
     filterValue0: PropTypes.object,
-    ficheCheckeds:PropTypes.func,
-     setFicheChecked:PropTypes.object,
-     afficheChecked:PropTypes.bool
+    ficheCheckeds: PropTypes.func,
+    setFicheChecked: PropTypes.object,
+    afficheChecked: PropTypes.bool,
+    eventApresDesaffectation : PropTypes.func
 }
 
 export default ListeFicheDrag;

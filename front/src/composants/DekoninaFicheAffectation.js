@@ -5,10 +5,12 @@ import { Card } from "primereact/card";
 import { DataView } from "primereact/dataview";
 import PropTypes from 'prop-types';
 import { useState } from "react";
-import { Badge, Button, Col, ListGroup, Row, Tab, Tabs } from "react-bootstrap";
+import { Badge, Button, Col, ListGroup, Offcanvas, Row, Tab, Tabs } from "react-bootstrap";
+import dekoninaServ from "services/dekonina/dekoninaService";
+import DetailsMpiangona from "./DetailsMpiangona";
 
 
-function DekoninaFicheAffectation({ dekonina, setDekonina, fiches, setFiches }) {
+function DekoninaFicheAffectation({ dekonina, setDekonina, fiches, setFiches,actionApresValidation }) {
     const titleTableFiche = [
         { title: "N° FICHE", data: "numfichempiangona", typeData: 'input' },
         { title: "Nombre famille", data: "nombrempiangona", typeData: 'number' },
@@ -190,7 +192,31 @@ function DekoninaFicheAffectation({ dekonina, setDekonina, fiches, setFiches }) 
             <h7>Fiche affecter : <Badge bg="primary">{fiches.length.toLocaleString()}</Badge></h7>
         </>
     )
+    const handleValider = async ()=>{
+        let est = true;
+        if(dekonina === null){
+            est = false;
+            alert("veuiller choisir un dekonina")
+        }
+        if(fiches.length === 0){
+            est = false;
+            alert("veuiller choisir au moins une fiche")
+        }
+        if(est === true){
+            for (let i = 0; i < fiches.length; i++) {
+                let data = await dekoninaServ.addFicheDekonina({numfichempiangona:fiches[i]['numfichempiangona'],mpiangonaid:dekonina['mpiangonaid']});    
+                console.log(data)
+            }
+            setFiches([])
+            alert("affectation avec succes")
+            actionApresValidation();
+        }
+    }
+    const [show, setShow] = useState(false);
 
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+    const [mpiangonaid, setMpiangonaid] = useState("");
     return (
         <>
             <Card title={"Affectation dekonina au fiche"}>
@@ -204,9 +230,21 @@ function DekoninaFicheAffectation({ dekonina, setDekonina, fiches, setFiches }) 
                             {
                                 dekonina && (
                                     <Card>
+                                        <div className="flex flex-wrap align-items-center justify-content-between gap-2">
+                                            <h3 style={{ fontWeight: "bold" }}>{renderColumnData(dekonina, titleTable[0])}</h3>
+                                            <ArgonBox mr={1}>
+                                                <div>
+                                                    <Button variant='warning' onClick={()=>{setMpiangonaid(dekonina['mpiangonaid']); handleShow()}}>
+                                                        <ArgonBox component="i" color="warning" fontSize="14px" className="ni ni-single-02" />
+                                                        {"Plus d'information"}
+                                                    </Button>
+
+                                                </div>
+                                            </ArgonBox>
+                                        </div>
                                         {titleTable.map((column, index2) => (
                                             (!column.isExtra || showExtraColumns) && (
-                                                index2 > -1 && (
+                                                index2 > 0 && (
                                                     <div key={index2}>
                                                         {column.title}:&nbsp;&nbsp;<strong>{renderColumnData(dekonina, column)}</strong>
                                                     </div>
@@ -234,13 +272,20 @@ function DekoninaFicheAffectation({ dekonina, setDekonina, fiches, setFiches }) 
                     </Tab>
                     <Tab eventKey="validation" title={"Valider"}>
                         <div className="d-grid gap-2">
-                            <Button variant="success" >
+                            <Button variant="success" onClick={handleValider}>
                                 Valider
                             </Button>
                         </div>
                     </Tab>
                 </Tabs>
             </Card>
+            <Offcanvas show={show} onHide={handleClose}  placement={'end'} name={'end'} style={{ width: '75%' }}>
+                <Offcanvas.Header closeButton>
+                </Offcanvas.Header>
+                <Offcanvas.Body>
+                    <DetailsMpiangona mpiangonaid={mpiangonaid}/>
+                </Offcanvas.Body>
+            </Offcanvas>
         </>
     );
 }
@@ -249,6 +294,7 @@ DekoninaFicheAffectation.propTypes = {
     setDekonina: PropTypes.func,
     fiches: PropTypes.array,
     setFiches: PropTypes.func,
+    actionApresValidation : PropTypes.func
 }
 
 export default DekoninaFicheAffectation;

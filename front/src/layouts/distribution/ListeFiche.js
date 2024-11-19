@@ -80,6 +80,7 @@ function ListeFiche() {
                                                 setDekonina={setDekoninaSelected}
                                                  fiches={ficheCheckeds}
                                                 setFiches = {setFicheCheCkeds}
+                                                actionApresValidation={()=>{window.location.reload() }}
                                                 />
                                             </Card>
                                         </Grid>

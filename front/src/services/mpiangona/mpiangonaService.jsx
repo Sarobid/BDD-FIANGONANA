@@ -30,6 +30,19 @@ const mpiangonaServ = {
             traiteError(error)
         })
     },
+    getAllDekoninaMpiahy : (data,num,pageSize,traiteSucces,traiteError)=>{
+        if(num <= 0){
+            num=1;
+        }
+        axios.post(url.urlHtpp+"/mpiangonas/dekonina/"+num+"/"+pageSize, data)
+        .then(response=>{
+            console.log("liste mpiangona",response.data)
+            traiteSucces(response.data.data,response.data.totalPage);
+        }).catch(error=>{
+            console.log("error-liste",error)
+            traiteError(error)
+        })
+    },
     getAllMpiangonaAsync : async (data,num,pageSize)=>{
         if(num <= 0){
             num=1;
