@@ -20,5 +20,18 @@ const ficheServ = {
             traiteError(error)
         })
     },
+    getAllSuivieFiche : (data,num,pageSize,traiteSucces,traiteError)=>{
+        if(num <= 0){
+            num=1;
+        }
+        axios.post(url.urlHtpp+"/fiches/suivie/"+num+"/"+pageSize, data)
+        .then(response=>{
+           // console.log(response.data)
+            traiteSucces(response.data.data,response.data.totalPage);
+        }).catch(error=>{
+            //console.log(error)
+            traiteError(error)
+        })
+    },
  }
  export default ficheServ;

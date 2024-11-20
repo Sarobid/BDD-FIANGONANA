@@ -19,6 +19,7 @@ import dekoninaServ from "services/dekonina/dekoninaService";
 import ficheServ from "services/fiche/ficheService";
 import mpiangonaServ from "services/mpiangona/mpiangonaService";
 import DekoninaFicheAffectation from "./DekoninaFicheAffectation";
+import ListeFamangina from "./ListeFamangina";
 import ListeMpiangona2 from "./ListeMpiangona2";
 import ListeMpiangonaDrag from "./ListeMpiangonaDrag";
 import NouveauSuivieFiche from "./NouveauSuivieFiche";
@@ -92,6 +93,7 @@ function DetailsFiche({ numfiche }) {
         );
     }
     const [showNouveauFiche,setShowNouveauFiche] = useState(false);
+    const [refresh,setRefresh] = useState("1");
     useEffect(() => {
         getDetails();
     }, [numfiche])
@@ -210,12 +212,13 @@ function DetailsFiche({ numfiche }) {
                                                             </div>
                                                             {
                                                                 showNouveauFiche && (
-                                                                    <NouveauSuivieFiche numfiche={fiche['numfichempiangona']} dekoninaid={dekoninaMiahyid} actionApres={() => { getDetails();setShowNouveauFiche(false) }} />
+                                                                    <NouveauSuivieFiche numfiche={fiche['numfichempiangona']} dekoninaid={dekoninaMiahyid} actionApres={() => { setRefresh(refresh+"1");setShowNouveauFiche(false) }} />
                                                                 )
                                                             }
                                                         </>
                                                     )
                                                 }
+                                                <ListeFamangina title={""} filterValues0={{numfichesuivie:fiche['numfichempiangona']}} getAllMpiangona={ficheServ.getAllSuivieFiche} autreTitle={[]} changeDeclarer={refresh}/>
                                             </Tab>
                                             <Tab eventKey="histdekonina" title="Historique Dekonina Miahy">
                                                 <ListeMpiangona2 title={""} filterValues0={{ numfiche: fiche['numfichempiangona'] }} getAllMpiangona={mpiangonaServ.getAllDekoninaMpiahy} autreTitle={[{ title: "Date debut", data: "datedebut", typeData: 'date' }, { title: "Date Fin", data: "datefin", typeData: 'date' }]} />
