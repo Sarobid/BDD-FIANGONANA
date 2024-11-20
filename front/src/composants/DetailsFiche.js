@@ -14,13 +14,14 @@ import { useEffect, useState } from 'react';
 
 import { Icon } from "@mui/material";
 import ArgonButton from "components/ArgonButton";
-import { ListGroup, Tab, Tabs } from "react-bootstrap";
+import { Button, ListGroup, Tab, Tabs } from "react-bootstrap";
 import dekoninaServ from "services/dekonina/dekoninaService";
 import ficheServ from "services/fiche/ficheService";
 import mpiangonaServ from "services/mpiangona/mpiangonaService";
 import DekoninaFicheAffectation from "./DekoninaFicheAffectation";
 import ListeMpiangona2 from "./ListeMpiangona2";
 import ListeMpiangonaDrag from "./ListeMpiangonaDrag";
+import NouveauSuivieFiche from "./NouveauSuivieFiche";
 
 function DetailsFiche({ numfiche }) {
     const [fiche, setFiche] = useState(null)
@@ -34,6 +35,7 @@ function DetailsFiche({ numfiche }) {
             if (totalPage > 0) {
                 setFiche(data[0])
                 setFicheCheCkeds([data[0]])
+                getDekoninaMiahy(data[0]);
             }
         }, (error) => {
             console.log(error);
@@ -66,12 +68,30 @@ function DetailsFiche({ numfiche }) {
         const value = rowData[column.data];
         return column.traitementAffiche ? column.traitementAffiche(value) : value;
     };
+    const [dekoninaMiahyid, setDekoninaMiahyid] = useState(null)
     const [dekoninaSelected, setDekoninaSelected] = useState(null);
     const [ficheCheckeds, setFicheCheCkeds] = useState([]);
     const handleDesaffecter = async (numfiche) => {
         let data = await dekoninaServ.finFicheDekonina(numfiche);
         getDetails()
     }
+    const getDekoninaMiahy = (fiche) => {
+        mpiangonaServ.getAllDekoninaMpiahy(
+            { numfiche: fiche['numfichempiangona'], datefin: 'null' },
+            1,
+            1,
+            (data, totalPage) => {
+                //traiteApres(data, totalPage);
+                if (data.length > 0) {
+                    setDekoninaMiahyid(data[0]['mpiangonaid'])
+                }
+            },
+            (error) => {
+                console.error(error);
+            }
+        );
+    }
+    const [showNouveauFiche,setShowNouveauFiche] = useState(false);
     useEffect(() => {
         getDetails();
     }, [numfiche])
@@ -131,9 +151,8 @@ function DetailsFiche({ numfiche }) {
                                             {
                                                 fiche['nombredekonina'] !== '0' && (
                                                     <Tab eventKey="dekonina" title="Dekonina Miahy">
-                                                        <ListeMpiangona2 title={""} filterValues0={{ numfiche: fiche['numfichempiangona'] }} getAllMpiangona={mpiangonaServ.getAllDekoninaMpiahy} autreTitle={[{ title: "Date debut", data: "datedebut", typeData: 'date' }, { title: "Date Fin", data: "datefin", typeData: 'date' }]} />
+                                                        <ListeMpiangona2 title={""} filterValues0={{ numfiche: fiche['numfichempiangona'], datefin: 'null' }} getAllMpiangona={mpiangonaServ.getAllDekoninaMpiahy} autreTitle={[{ title: "Date debut", data: "datedebut", typeData: 'date' }, { title: "Date Fin", data: "datefin", typeData: 'date' }]} />
                                                     </Tab>
-
                                                 )
                                             }
                                             {
@@ -167,7 +186,9 @@ function DetailsFiche({ numfiche }) {
                                                         </>
                                                     </Tab>
                                                 )
-                                            }{
+                                            }
+
+                                            {
                                                 fiche['nombredekonina'] !== '0' && (
                                                     <Tab eventKey="desaffectation" title="Desaffecter">
                                                         <div onClick={() => { handleDesaffecter(fiche['numfichempiangona']) }}>
@@ -178,6 +199,27 @@ function DetailsFiche({ numfiche }) {
                                                     </Tab>
                                                 )
                                             }
+                                            <Tab eventKey="histsuivie" title="Famangina">
+                                                {
+                                                    fiche['nombredekonina'] !== '0' && (
+                                                        <>
+                                                            <div className="d-grid gap-2">
+                                                                <Button variant="primary" onClick={()=>{setShowNouveauFiche((prev)=>!prev)}}>
+                                                                    {showNouveauFiche ? "annuler le Famangina":"Nouveau Famangina"}
+                                                                </Button>
+                                                            </div>
+                                                            {
+                                                                showNouveauFiche && (
+                                                                    <NouveauSuivieFiche numfiche={fiche['numfichempiangona']} dekoninaid={dekoninaMiahyid} actionApres={() => { getDetails();setShowNouveauFiche(false) }} />
+                                                                )
+                                                            }
+                                                        </>
+                                                    )
+                                                }
+                                            </Tab>
+                                            <Tab eventKey="histdekonina" title="Historique Dekonina Miahy">
+                                                <ListeMpiangona2 title={""} filterValues0={{ numfiche: fiche['numfichempiangona'] }} getAllMpiangona={mpiangonaServ.getAllDekoninaMpiahy} autreTitle={[{ title: "Date debut", data: "datedebut", typeData: 'date' }, { title: "Date Fin", data: "datefin", typeData: 'date' }]} />
+                                            </Tab>
                                         </Tabs>
                                     </Grid>
                                 </Grid>

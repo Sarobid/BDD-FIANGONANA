@@ -22,4 +22,14 @@ module.exports = function(app) {
             serv.analyseError(err).then(error=>{res.send(error)})
         });
     });
+    app.post("/fiche/suivie",(req,res)=>{
+        console.log(req.body)
+        ficheServ.suivieFiche(req.body)
+        .then(data => {
+            res.json(data);
+        }).catch(err => {
+            res.status(err.status || 400);
+            serv.analyseError(err).then(error=>{res.send(error)})
+        });
+    });
 }

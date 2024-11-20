@@ -1,6 +1,9 @@
 import axios from 'axios';
 import url from '../common';
 const ficheServ = {
+    addsuivieFiche : async (data)=>{
+        return  await axios.post(url.urlHtpp+"/fiche/suivie",data)
+    },
     getStateFiche : async (legende,param)=>{
         return  await axios.post(url.urlHtpp+"/statistique-fiche",{legende:legende,filter:param})
     },

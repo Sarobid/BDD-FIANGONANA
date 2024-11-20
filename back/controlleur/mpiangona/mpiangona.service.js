@@ -54,7 +54,11 @@ async function getDekoninaMpiahy(mpiangona, num, nombrePage){
                 } else if (critereFiltre[i].typeData === 'select') {
                     condition += " and " + critereFiltre[i].data + "='" + mpiangona[critereFiltre[i].data] + "'";
                 } else if (critereFiltre[i].typeData === 'date') {
-                    condition += " and " + critereFiltre[i].data + "='" + mpiangona[critereFiltre[i].data] + "'";
+                    if(mpiangona[critereFiltre[i].data] === 'null'){
+                        condition += " and " + critereFiltre[i].data + " is null";
+                    }else{
+                        condition += " and " + critereFiltre[i].data + "='" + mpiangona[critereFiltre[i].data] + "'";
+                    }
                 }
                 else if (critereFiltre[i].typeData === 'string') {
                     condition += " and UPPER(" + critereFiltre[i].data + ")='" + mpiangona[critereFiltre[i].data].toUpperCase() + "'";
