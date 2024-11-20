@@ -4,8 +4,9 @@ const ficheServ = {
     addsuivieFiche : async (data)=>{
         return  await axios.post(url.urlHtpp+"/fiche/suivie",data)
     },
-    getStateSuivie : async (filter,typePeriode)=>{
-        return  await axios.post(url.urlHtpp+"/fiche/statistique-suivie",{typePeriode:typePeriode,filter:filter})
+    getStateSuivie : async (filter,typePeriode,filtrePeriode)=>{
+        console.log("periode",typePeriode,filter,filtrePeriode)
+        return  await axios.post(url.urlHtpp+"/fiche/statistique-suivie",{filtrePeriode:filtrePeriode,typePeriode:typePeriode,filter:filter})
     },
     getStateFiche : async (legende,param)=>{
         return  await axios.post(url.urlHtpp+"/statistique-fiche",{legende:legende,filter:param})

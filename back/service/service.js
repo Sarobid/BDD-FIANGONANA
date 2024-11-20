@@ -72,15 +72,72 @@ function formatPrice(price){
 }
 exports.formatPrice = formatPrice;
 
-function createColonnePeriodeSQL(type,colonneDate){
-    let sql = " "+colonneDate+" ";
+function createColonnePeriodeSQL(type,colonneDate,name){
+    let sql = " "+colonneDate+" as "+name+" ,";
     if(type === "mensuel"){
-        sql = " CONCAT(EXTRACT(MONTH FROM "+colonneDate+"),'-',EXTRACT(YEAR FROM "+colonneDate+"))  "
+        sql = " CONCAT(TO_CHAR("+colonneDate+", 'TMMonth'),'-',EXTRACT(YEAR FROM "+colonneDate+")) as "+name+" ,EXTRACT(MONTH FROM "+colonneDate+"), "
     }
     if(type === "annuel"){
-        sql = " EXTRACT(YEAR FROM "+colonneDate+") "
+        sql = " EXTRACT(YEAR FROM "+colonneDate+") as  "+name+","
     }
 
     return sql+"";
 }
 exports.createColonnePeriodeSQL = createColonnePeriodeSQL;
+
+function createOrderByPeriodeSQL(type,colonneDate){
+    let sql = " "+colonneDate+" asc ";
+    if(type === "mensuel"){
+        sql = " EXTRACT(YEAR FROM "+colonneDate+") asc,EXTRACT(MONTH FROM "+colonneDate+") asc  "
+    }
+    if(type === "annuel"){
+        sql = " EXTRACT(YEAR FROM "+colonneDate+") asc "
+    }
+    return sql+"";
+}
+exports.createOrderByPeriodeSQL = createOrderByPeriodeSQL;
+
+function createGroupByPeriodeSQL(type,colonneDate){
+    let sql = " "+colonneDate+" ";
+    if(type === "mensuel"){
+        sql = "TO_CHAR("+colonneDate+", 'TMMonth'), EXTRACT(YEAR FROM "+colonneDate+") ,EXTRACT(MONTH FROM "+colonneDate+")  "
+    }
+    if(type === "annuel"){
+        sql = " EXTRACT(YEAR FROM "+colonneDate+")  "
+    }
+    return sql+"";
+}
+exports.createGroupByPeriodeSQL = createGroupByPeriodeSQL;
+
+function createFiltreColonnePeriodeSQL(type,colonneDate,debut,fin){
+    let sql = " ";
+    if(type === "journaliere"){
+        if(debut !== "" && debut !==null){
+            sql += " and "+colonneDate+" >='"+debut+"' "
+        }
+        if(fin !== "" && fin !== null){
+            sql += " and "+colonneDate+" <='"+fin+"' "
+        }
+    }
+    if(type === "mensuel"){
+        if(debut !== "" && debut !==null){
+            let d = debut.split("-");
+            sql += " and ( EXTRACT(MONTH FROM "+colonneDate+") >="+d[0]+" and EXTRACT(YEAR FROM "+colonneDate+")>="+d[1]+")";
+        }
+        if(fin !== "" && fin !==null){
+            let d = fin.split("-");
+            sql += " and ( EXTRACT(MONTH FROM "+colonneDate+") <="+d[0]+" and EXTRACT(YEAR FROM "+colonneDate+")<="+d[1]+")";
+        }
+    }
+    if(type === "annuel"){
+        if(debut !== "" && debut!==null){
+            sql += " and ( EXTRACT(YEAR FROM "+colonneDate+") >="+debut+" )";
+        }
+        if(fin !== "" && fin !==null){
+            sql += " and ( EXTRACT(YEAR FROM "+colonneDate+") <="+fin+" )";
+        }
+    }
+
+    return sql+"";
+}
+exports.createFiltreColonnePeriodeSQL = createFiltreColonnePeriodeSQL;

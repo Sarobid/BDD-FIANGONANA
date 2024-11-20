@@ -44,7 +44,7 @@ const critereFiltre = [
 ]
 
 async function getDekoninaMpiahy(mpiangona, num, nombrePage){
-    console.log("mpiangona", mpiangona)
+    //console.log("mpiangona", mpiangona)
     let condition = "";
     for (let i = 0; i < critereFiltre.length; i++) {
         if (mpiangona[critereFiltre[i].data]) {
@@ -84,7 +84,7 @@ async function getDekoninaMpiahy(mpiangona, num, nombrePage){
     let offset = (num - 1) * nombrePage;
     let sql = `select a.numfiche,a.datedebut,a.datefin,b.* from distributiondekonina a join v_mpiangona b on b.mpiangonaid=a.mpiangonaid where 1=1 ${condition} order by a.datedebut,a.mpiangonaid desc  offset ${offset} limit ${nombrePage}`;
     let sql2 = `select count(*) as total from distributiondekonina a join v_mpiangona b on b.mpiangonaid=a.mpiangonaid where 1=1 ${condition}`;
-    console.log(sql)
+    //console.log(sql)
     try {
         let d = await client.query(sql);
         let total = await client.query(sql2);
@@ -99,7 +99,7 @@ async function getDekoninaMpiahy(mpiangona, num, nombrePage){
 }
 exports.getDekoninaMpiahy = getDekoninaMpiahy;
 async function getStatistiqueBatisa(mpiangona) {
-    console.log("mpandray state", mpiangona)
+    //console.log("mpandray state", mpiangona)
     let condition = "";
     for (let i = 0; i < critereFiltre.length; i++) {
         if (mpiangona[critereFiltre[i].data]) {
@@ -125,7 +125,7 @@ CASE
         WHEN a.vitabatisa =1 THEN 'green' 
         ELSE 'red' end as color
 ,count(*) as value  from v_mpiangona a where 1=1 ${condition} group by a.vitabatisa order by a.vitabatisa desc `;
-    console.log(sql)
+    //console.log(sql)
     try {
         let d = await client.query(sql);
         return d.rows;
@@ -136,7 +136,7 @@ CASE
 exports.getStatistiqueBatisa = getStatistiqueBatisa;
 
 async function getStatistiqueMpandray(mpiangona) {
-    console.log("mpandray state", mpiangona)
+    //console.log("mpandray state", mpiangona)
     let condition = "";
     for (let i = 0; i < critereFiltre.length; i++) {
         if (mpiangona[critereFiltre[i].data]) {
@@ -163,7 +163,7 @@ CASE
         WHEN a.estmpandray = 'MPANDRAY' THEN 'green' 
         ELSE 'blue'end as color
 ,count(*) as value  from v_mpiangona a where 1=1 ${condition} group by a.estmpandray order by a.estmpandray desc `;
-    console.log(sql)
+    //console.log(sql)
     try {
         let d = await client.query(sql);
         return d.rows;
@@ -183,7 +183,7 @@ async function getAllOptions(colonneName) {
 }
 exports.getAllOptions = getAllOptions;
 async function getAll(mpiangona, num, nombrePage) {
-    console.log("mpiangona", mpiangona)
+    //console.log("mpiangona", mpiangona)
     let condition = "";
     for (let i = 0; i < critereFiltre.length; i++) {
         if (mpiangona[critereFiltre[i].data]) {
@@ -219,7 +219,7 @@ async function getAll(mpiangona, num, nombrePage) {
     let offset = (num - 1) * nombrePage;
     let sql = `select * from v_mpiangona where 1=1 ${condition} order by nomcompletmpiangona offset ${offset} limit ${nombrePage}`;
     let sql2 = `select count(*) as total from v_mpiangona where 1=1 ${condition}`;
-   // console.log(sql)
+   // //console.log(sql)
     try {
         let d = await client.query(sql);
         let total = await client.query(sql2);
@@ -250,7 +250,7 @@ async function findById(id){
 exports.findById = findById;
 
 async function insertion(mpiangona) {
-    console.log("mpiangona", mpiangona);
+    //console.log("mpiangona", mpiangona);
     let values = [];
     let seq = await client.query("select nextval('seq_mpiangona') as seq;");
     values.push(seq.rows[0]['seq'])
@@ -294,7 +294,7 @@ async function insertion(mpiangona) {
             }
         }
     }
-    console.log("COLUMN = " + objetkeys.length + " VALUE = " + values.length + "");
+    //console.log("COLUMN = " + objetkeys.length + " VALUE = " + values.length + "");
 
     let sql = `INSERT INTO "public".mpiangona
 	( mpiangonaid,numfichempiangona, adressempiangona, nommpiangona, prenommpiangona, nomcompletmpiangona, datenaissancempiangona, codegenrempiangona, datebatisa,lieubatisa, estmpandray

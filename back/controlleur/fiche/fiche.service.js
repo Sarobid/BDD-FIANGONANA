@@ -63,8 +63,8 @@ async function getAll(param, num, nombrePage) {
             condition += " and UPPER(b.adressempiangona) like'%" + param['adressempiangona'].toUpperCase() + "%'";
         }
     }
-    console.log(param)
-    console.log(condition)
+    //console.log(param)
+    //console.log(condition)
     let offset = (num - 1) * nombrePage;
     let sql = `select distinct a.* from v_fiche a join v_ficheadresse b 
         on b.numfichempiangona=a.numfichempiangona left join distributiondekonina c on c.numfiche=a.numfichempiangona 
@@ -73,7 +73,7 @@ async function getAll(param, num, nombrePage) {
         on b.numfichempiangona=a.numfichempiangona left join distributiondekonina c on c.numfiche=a.numfichempiangona
         where 1=1 ${condition})s `;
     try {
-        console.log(sql)
+        //console.log(sql)
         let d = await client.query(sql);
         let total = await client.query(sql2);
         let totalPage = 0;
@@ -107,7 +107,7 @@ async function getStatistiqueFiche(body,param) {
     let sql = `select name,code,color,SUM(value) as value from ( select ${sqlColone.colonne} ,count(*) as value from (select distinct a.* from v_fiche a join v_ficheadresse b 
         on b.numfichempiangona=a.numfichempiangona
         where 1=1 ${condition})s group by s.nombredekonina,${sqlColone.group} ) l group by name,code,color`;
-        console.log(sql);
+        //console.log(sql);
     try {
         let d = await client.query(sql);
         return d.rows ;
@@ -122,7 +122,7 @@ function traitementSQLEnteteMinMax(colonneName,body){
     let initialName = " CASE ";
     let initialColor = " CASE ";
     for (let i = 0; i < body.length; i++) {
-        console.log(body[i]);
+        //console.log(body[i]);
         let colonneMinMax = " WHEN 1=1 ";
         let min = "";
         let max = "";
@@ -169,7 +169,7 @@ async function getAdressesFiche(numfiche){
 }
 
 async function suivieFiche(body){
-    console.log(body);
+    //console.log(body);
     try {
         if(body.numfichempiangona === ""){
             throw new Error("Num fiche doit etre declarer");
@@ -258,7 +258,7 @@ async function getListeSuivie(mpiangona, num, nombrePage){
     let sql = `select a.suiviefamilleid,a.descriptionsuivie,a.datesuivie,a.namangy,a.numfichesuivie,b.* from suiviefamille a join v_mpiangona b on b.mpiangonaid=a.mpiangonaid
      where 1=1 ${condition} order by a.datesuivie,a.numfichesuivie desc  offset ${offset} limit ${nombrePage}`;
     let sql2 = `select count(*) as total from suiviefamille a join v_mpiangona b on b.mpiangonaid=a.mpiangonaid where 1=1 ${condition}`;
-   // console.log(sql)
+   // //console.log(sql)
     try {
         let d = await client.query(sql);
         let total = await client.query(sql2);
@@ -274,7 +274,7 @@ async function getListeSuivie(mpiangona, num, nombrePage){
 exports.getListeSuivie = getListeSuivie;
 
 
-async function statistiqueNombreDeSuivie(mpiangona, typePeriode){
+async function statistiqueNombreDeSuivie(mpiangona, typePeriode,filtrePeriode){
     let critereFiltre = [{ title: "Nom/Prenom", data: "nomcompletmpiangona", typeData: 'input' },
         { title: "N° FICHE", data: "numfichempiangona", typeData: 'select' },
         { title: "N° FICHE", data: "numfichesuivie", typeData: 'select' },
@@ -335,8 +335,9 @@ async function statistiqueNombreDeSuivie(mpiangona, typePeriode){
             }
         }
     }
-    let sql = `select ${serv.createColonnePeriodeSQL(typePeriode,"a.datesuivie")} as periode,a.numfichesuivie,count(*) as nombre from suiviefamille a join v_mpiangona b on b.mpiangonaid=a.mpiangonaid
-     where 1=1 ${condition} group by ${serv.createColonnePeriodeSQL(typePeriode,"a.datesuivie")},a.numfichesuivie`;
+    condition += serv.createFiltreColonnePeriodeSQL(typePeriode,"a.datesuivie",filtrePeriode.debut,filtrePeriode.fin)
+    let sql = `select ${serv.createColonnePeriodeSQL(typePeriode,"a.datesuivie","periode")} a.numfichesuivie,count(*) as nombre from suiviefamille a join v_mpiangona b on b.mpiangonaid=a.mpiangonaid
+     where 1=1 ${condition} group by ${serv.createGroupByPeriodeSQL(typePeriode,"a.datesuivie")},a.numfichesuivie order by ${serv.createOrderByPeriodeSQL(typePeriode,"a.datesuivie")};`;
     try {
         console.log(sql);
         let d = await client.query(sql);

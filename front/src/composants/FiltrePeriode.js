@@ -1,7 +1,8 @@
 import { Card } from "primereact/card";
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Col, FloatingLabel, Form, Row } from "react-bootstrap";
+import serv from "services/service";
 
 function FiltrePeriode({ setTypePeriodeChoisi, setDebut, setFin }) {
     const [typePeriodes, setTypePeriodes] = useState([{ code: "journaliere", name: "journaliere" }
@@ -11,13 +12,17 @@ function FiltrePeriode({ setTypePeriodeChoisi, setDebut, setFin }) {
     const [fin2, setFin2] = useState(null);
     const [anneeDeb, setAnneeDeb] = useState(new Date().getFullYear());
     const [anneeFin, setAnneeFin] = useState(new Date().getFullYear());
+    const [listMois, setListMois] = useState([]);
+    useEffect(() => {
+        setListMois(serv.getListeMois())
+    })
     return (
         <>
             <Card>
                 <Row>
                     <Col md={12}>
                         <FloatingLabel controlId="floatingSelect" label={"Type Periode"} className="mb-3">
-                            <Form.Select value={typePeriode} onChange={e => { setTypePeriode(e.target.value); setTypePeriodeChoisi(e.target.value) }}>
+                            <Form.Select value={typePeriode} onChange={e => { setDebut(null);setFin(null);setTypePeriode(e.target.value); setTypePeriodeChoisi(e.target.value) ;  }}>
                                 <option>Choisir</option>
                                 {typePeriodes.map((option, index) => (
                                     <option key={index} value={option.code}>{option.name}</option>
@@ -48,13 +53,24 @@ function FiltrePeriode({ setTypePeriodeChoisi, setDebut, setFin }) {
                                     <Col md={6}>
 
                                         <FloatingLabel controlId="floatingInput" label={"Debut"} className="mb-3">
-                                            <Form.Control type="month" value={deb} onChange={e => { setDeb(e.target.value); setDebut(e.target.value + "-" + anneeDeb) }} placeholder="mois" />
+                                            {/* <Form.Control type="month"  placeholder="mois" /> */}
+                                            <Form.Select  value={deb} onChange={e => { setDeb(e.target.value); setDebut(e.target.value + "-" + anneeDeb) }}>
+                                                {listMois.map((option, index) => (
+                                                    <option key={index} value={option.code}>{option.name}</option>
+                                                ))}
+                                            </Form.Select>
                                             <Form.Control type="year" value={anneeDeb} onChange={e => { setAnneeDeb(e.target.value); setDebut(deb + "-" + e.target.value) }} placeholder="annee" />
                                         </FloatingLabel>
                                     </Col>
                                     <Col md={6}>
                                         <FloatingLabel controlId="floatingInput" label={"Fin"} className="mb-3">
-                                            <Form.Control type="month" value={fin2} onChange={e => { setFin2(e.target.value); setFin(e.target.value + "-" + anneeFin) }} placeholder="mois" />
+                                            {/* <Form.Control type="month"  placeholder="mois" /> */}
+                                            <Form.Select  value={fin2} onChange={e => { setFin2(e.target.value); setFin(e.target.value + "-" + anneeFin) }}>
+                                                {listMois.map((option, index) => (
+                                                    <option key={index} value={option.code}>{option.name}</option>
+                                                ))}
+                                            </Form.Select>
+                                            
                                             <Form.Control type="year" value={anneeFin} onChange={e => { setAnneeFin(e.target.value); setFin(fin2 + e.target.value) }} placeholder="annee" />
                                         </FloatingLabel>
                                     </Col>

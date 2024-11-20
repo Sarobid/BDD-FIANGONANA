@@ -14,7 +14,7 @@ module.exports = function(app) {
 
     app.post("/fiche/statistique-suivie",(req,res)=>{
         console.log(req.body)
-        ficheServ.statistiqueNombreDeSuivie(req.body.filter,req.body.typePeriode)
+        ficheServ.statistiqueNombreDeSuivie(req.body.filter,req.body.typePeriode,req.body.filtrePeriode)
         .then(data => {
             res.json(data);
         }).catch(err => {
@@ -23,7 +23,7 @@ module.exports = function(app) {
         });
     });
     app.post("/statistique-fiche",(req,res)=>{
-        console.log(req.body)
+        //console.log(req.body)
         ficheServ.getStatistiqueFiche(req.body.legende,req.body.filter)
         .then(data => {
             res.json(data);
@@ -33,7 +33,7 @@ module.exports = function(app) {
         });
     });
     app.post("/fiche/suivie",(req,res)=>{
-        console.log(req.body)
+        //console.log(req.body)
         ficheServ.suivieFiche(req.body)
         .then(data => {
             res.json(data);

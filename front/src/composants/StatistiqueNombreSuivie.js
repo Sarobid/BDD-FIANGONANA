@@ -15,6 +15,7 @@ function StatistiqueNombreSuivie({ title, filterValues0, refresh }) {
     const [periodes, setPeriodes] = useState([]);
     const [serieData, setSerieData] = useState([]);
     const [typePeriode, setTypePeriode] = useState('mensuel');
+    
     const options = {
         chart: {
             type: 'column', // Peut être 'column' pour un graphique en barres
@@ -42,7 +43,7 @@ function StatistiqueNombreSuivie({ title, filterValues0, refresh }) {
 
     const getStateSuivie = async () => {
         try {
-            let d = await ficheServ.getStateSuivie(filterValues, typePeriode);
+            let d = await ficheServ.getStateSuivie(filterValues, typePeriode,{debut:debut,fin:fin});
             let data = d.data;
             console.log(data);
             setPeriodes(data.map(row => row.periode))
@@ -54,7 +55,7 @@ function StatistiqueNombreSuivie({ title, filterValues0, refresh }) {
             ])
         } catch (error) {
             console.log(error);
-            alert("err")
+            //alert("err")
         }
 
     }
@@ -89,7 +90,7 @@ function StatistiqueNombreSuivie({ title, filterValues0, refresh }) {
     }, [filterValues0])
     useEffect(() => {
         getStateSuivie()
-    }, [filterValues, refresh,typePeriode])
+    }, [filterValues, refresh,typePeriode,debut,fin])
     return (
         <div className="container">
             <Card title={title}>
