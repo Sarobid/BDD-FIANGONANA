@@ -71,3 +71,16 @@ function formatPrice(price){
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 exports.formatPrice = formatPrice;
+
+function createColonnePeriodeSQL(type,colonneDate){
+    let sql = " "+colonneDate+" ";
+    if(type === "mensuel"){
+        sql = " CONCAT(EXTRACT(MONTH FROM "+colonneDate+"),'-',EXTRACT(YEAR FROM "+colonneDate+"))  "
+    }
+    if(type === "annuel"){
+        sql = " EXTRACT(YEAR FROM "+colonneDate+") "
+    }
+
+    return sql+"";
+}
+exports.createColonnePeriodeSQL = createColonnePeriodeSQL;

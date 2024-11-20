@@ -23,6 +23,7 @@ import ListeFamangina from "./ListeFamangina";
 import ListeMpiangona2 from "./ListeMpiangona2";
 import ListeMpiangonaDrag from "./ListeMpiangonaDrag";
 import NouveauSuivieFiche from "./NouveauSuivieFiche";
+import StatistiqueNombreSuivie from "./StatistiqueNombreSuivie";
 
 function DetailsFiche({ numfiche }) {
     const [fiche, setFiche] = useState(null)
@@ -92,8 +93,8 @@ function DetailsFiche({ numfiche }) {
             }
         );
     }
-    const [showNouveauFiche,setShowNouveauFiche] = useState(false);
-    const [refresh,setRefresh] = useState("1");
+    const [showNouveauFiche, setShowNouveauFiche] = useState(false);
+    const [refresh, setRefresh] = useState("1");
     useEffect(() => {
         getDetails();
     }, [numfiche])
@@ -206,19 +207,20 @@ function DetailsFiche({ numfiche }) {
                                                     fiche['nombredekonina'] !== '0' && (
                                                         <>
                                                             <div className="d-grid gap-2">
-                                                                <Button variant="primary" onClick={()=>{setShowNouveauFiche((prev)=>!prev)}}>
-                                                                    {showNouveauFiche ? "annuler le Famangina":"Nouveau Famangina"}
+                                                                <Button variant="primary" onClick={() => { setShowNouveauFiche((prev) => !prev) }}>
+                                                                    {showNouveauFiche ? "annuler le Famangina" : "Nouveau Famangina"}
                                                                 </Button>
                                                             </div>
                                                             {
                                                                 showNouveauFiche && (
-                                                                    <NouveauSuivieFiche numfiche={fiche['numfichempiangona']} dekoninaid={dekoninaMiahyid} actionApres={() => { setRefresh(refresh+"1");setShowNouveauFiche(false) }} />
+                                                                    <NouveauSuivieFiche numfiche={fiche['numfichempiangona']} dekoninaid={dekoninaMiahyid} actionApres={() => { setRefresh(refresh + "1"); setShowNouveauFiche(false) }} />
                                                                 )
                                                             }
                                                         </>
                                                     )
                                                 }
-                                                <ListeFamangina title={""} filterValues0={{numfichesuivie:fiche['numfichempiangona']}} getAllMpiangona={ficheServ.getAllSuivieFiche} autreTitle={[]} changeDeclarer={refresh}/>
+                                                <StatistiqueNombreSuivie title={"Evolution Famangina"} filterValues0={{ numfichesuivie: fiche['numfichempiangona'] }} refresh={refresh} />
+                                                <ListeFamangina title={""} filterValues0={{ numfichesuivie: fiche['numfichempiangona'] }} getAllMpiangona={ficheServ.getAllSuivieFiche} autreTitle={[]} changeDeclarer={refresh} />
                                             </Tab>
                                             <Tab eventKey="histdekonina" title="Historique Dekonina Miahy">
                                                 <ListeMpiangona2 title={""} filterValues0={{ numfiche: fiche['numfichempiangona'] }} getAllMpiangona={mpiangonaServ.getAllDekoninaMpiahy} autreTitle={[{ title: "Date debut", data: "datedebut", typeData: 'date' }, { title: "Date Fin", data: "datefin", typeData: 'date' }]} />

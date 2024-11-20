@@ -1,4 +1,6 @@
 const client = require("../../db");
+var serv = require("../../service/service");
+
 async function getAll(param, num, nombrePage) {
     let condition = "";
     if(param['nombreadresse']){
@@ -256,7 +258,7 @@ async function getListeSuivie(mpiangona, num, nombrePage){
     let sql = `select a.suiviefamilleid,a.descriptionsuivie,a.datesuivie,a.namangy,a.numfichesuivie,b.* from suiviefamille a join v_mpiangona b on b.mpiangonaid=a.mpiangonaid
      where 1=1 ${condition} order by a.datesuivie,a.numfichesuivie desc  offset ${offset} limit ${nombrePage}`;
     let sql2 = `select count(*) as total from suiviefamille a join v_mpiangona b on b.mpiangonaid=a.mpiangonaid where 1=1 ${condition}`;
-    console.log(sql)
+   // console.log(sql)
     try {
         let d = await client.query(sql);
         let total = await client.query(sql2);
@@ -270,3 +272,77 @@ async function getListeSuivie(mpiangona, num, nombrePage){
     }
 }
 exports.getListeSuivie = getListeSuivie;
+
+
+async function statistiqueNombreDeSuivie(mpiangona, typePeriode){
+    let critereFiltre = [{ title: "Nom/Prenom", data: "nomcompletmpiangona", typeData: 'input' },
+        { title: "N° FICHE", data: "numfichempiangona", typeData: 'select' },
+        { title: "N° FICHE", data: "numfichesuivie", typeData: 'select' },
+        { title: "N° FICHE", data: "numfiche", typeData: 'select' },
+        {title:"",data:"datesuivie",typeData:"date"},
+        { title: "ADIRESY", data: "adressempiangona", typeData: 'input' },
+        { title: "ANARANA", data: "nommpiangona", typeData: 'input' },
+        { title: "FANAMPINY 1", data: "prenommpiangona", typeData: 'input' },
+        {
+            title: "DATY NAHATERAHANA", data: "datenaissancempiangona", typeData: 'date'
+        },
+        {
+            title: "LAHY/ VAVY", data: "codegenrempiangona", typeData: 'select'
+        },
+        {
+            title: "DATY BATISA", data: "datebatisa", typeData: 'date'
+        },
+        {
+            title: "DEKONINA", data: "estdekonina", typeData: 'select'
+        },
+        { title: "TOERANA NANAOVANA BATISA", typeData: 'input', data: "lieubatisa" },
+        { title: "MPANDRAY/ KATEKOMENA", data: "estmpandray", typeData: 'select' },
+        {
+            title: "DATY NANDRAISANA MFT", data: "datempandray", typeData: 'date'
+        },
+        { title: "TOERANA NANDRAISANA", data: "lieumpandray", typeData: 'input' },
+        { title: "N° KARATRA MPANDRAY", data: "karatrampandray", typeData: 'input' },
+        { title: "RAY", data: "nompere", typeData: 'input' },
+        { title: "RENY", data: "nommere", typeData: 'input' },
+        {
+            title: "Telephone", data: "telephone", typeData: 'input'
+        },
+        { title: "EMAIL", data: "email", typeData: 'input' },
+        { title: "MANAMBADY VITA SORATRA", data: "estvadysoratra", typeData: 'select' },
+        { title: "MANAMBADY VITA FANAMASINANA", data: "estvadymasina", typeData: 'select' },
+        { title: "MATY VADY", data: "matyvady", typeData: 'select' },
+        { title: "NISARAKA", data: "nisarabady", typeData: 'select' },
+        { title: "ASA", data: "asampiangona", typeData: 'input' },
+        { title: "TOERANA IASANA", data: "lieuasa", typeData: 'input' }];
+    let condition = "";
+    for (let i = 0; i < critereFiltre.length; i++) {
+        if (mpiangona[critereFiltre[i].data]) {
+            if (mpiangona[critereFiltre[i].data] !== "") {
+                if (critereFiltre[i].typeData === 'input') {
+                    condition += " and UPPER(" + critereFiltre[i].data + "::TEXT) like '%" + mpiangona[critereFiltre[i].data].toUpperCase() + "%' ";
+                } else if (critereFiltre[i].typeData === 'select') {
+                    condition += " and " + critereFiltre[i].data + "='" + mpiangona[critereFiltre[i].data] + "'";
+                } else if (critereFiltre[i].typeData === 'date') {
+                    if(mpiangona[critereFiltre[i].data] === 'null'){
+                        condition += " and " + critereFiltre[i].data + " is null";
+                    }else{
+                        condition += " and " + critereFiltre[i].data + "='" + mpiangona[critereFiltre[i].data] + "'";
+                    }
+                }
+                else if (critereFiltre[i].typeData === 'string') {
+                    condition += " and UPPER(" + critereFiltre[i].data + ")='" + mpiangona[critereFiltre[i].data].toUpperCase() + "'";
+                }
+            }
+        }
+    }
+    let sql = `select ${serv.createColonnePeriodeSQL(typePeriode,"a.datesuivie")} as periode,a.numfichesuivie,count(*) as nombre from suiviefamille a join v_mpiangona b on b.mpiangonaid=a.mpiangonaid
+     where 1=1 ${condition} group by ${serv.createColonnePeriodeSQL(typePeriode,"a.datesuivie")},a.numfichesuivie`;
+    try {
+        console.log(sql);
+        let d = await client.query(sql);
+        return d.rows;
+    } catch (error) {
+        throw error;
+    }
+}
+exports.statistiqueNombreDeSuivie = statistiqueNombreDeSuivie;
